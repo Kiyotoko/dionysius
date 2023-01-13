@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option optimize_for = SPEED;
+option java_package = "org.dionysius.grpc";
+option java_outer_classname = "DionysiusProto";
+option objc_class_prefix = "API";
+
+service Dionysius {
+  rpc Join(JoinRequest) returns (JoinReply);
+  rpc Leave(LeaveRequest) returns (ChangeReply);
+  rpc Status(StatusRequest) returns (StatusReply);
+  rpc Move(MovementRequest) returns (ChangeReply);
+  rpc Interact(InteractionRequest) returns (ChangeReply);
+  rpc Activate(ActivationRequest) returns (ChangeReply);
+}
+
+message JoinRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message JoinReply {
+  string token = 1;
+  string id = 2;
+}
+
+message LeaveRequest {
+  string token = 1;
+}
+
+message StatusRequest {
+  string token = 1;
+}
+
+message StatusReply {
+  message Team {
+    string id = 1;
+    string color = 2;
+    repeated string target = 3;
+  }
+
+  message Character {
+    string id = 1;
+    string name = 2;
+    string team = 3;
+    double hit_points = 4;
+    double theta = 5;
+    Vector position = 6;
+  }
+
+  message Action {
+    string id = 1;
+    string type = 2;
+    Vector position = 3;
+  }
+
+  message Area {
+    string id = 1;
+    Polygon outsides = 2;
+    repeated Polygon insides = 3;
+    Vector position = 4;
+  }
+
+  repeated Team teams = 1;
+  repeated Character characters = 2;
+  repeated Action actions = 3;
+  repeated Area areas = 4;
+  
+  map<string, string> destroyed = 5;
+}
+
+message MovementRequest {
+  string token = 1;
+  Vector target = 2;
+}
+
+message InteractionRequest {
+  string token = 1;
+  string target = 2;
+}
+
+message ActivationRequest {
+  string token = 1;
+  int32 slot = 2;
+  Vector target = 3;
+}
+
+message ChangeReply {
+
+}
+
+message Vector {
+  double x = 1;
+  double y = 2;
+}
+
+message Polygon {
+  repeated Vector points = 1;
+}
