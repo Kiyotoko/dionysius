@@ -5,10 +5,12 @@ version: '0.0.1'
 base: core18
 grade: devel
 confinement: devmode
-adopt-info: part-with-metadata
+adopt-info: dionysius
 parts: 
   dionysius:
     plugin: maven
     source: https://github.com/karl-zschiebsch/dionysius.git
-    source-tag: master
     maven-options: [] 
+    source-tag: master
+    stage-packages: [openjdk-11-jre-headless]
+    parse-info: [https://github.com/karl-zschiebsch/dionysius/blob/master/dionysius.metainfo.xml]

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.dionysius.Dionysius</id> 
+  <name>Dionysius</name>
+  <summary>Top down shooter</summary>
+  <description>
+    This is applications's description. A paragraph or two to tell the
+    most important story about it.
+  </description>
+  <releases>
+    <release date="2023-01-18" version="0.0.1"/>
+  </releases>
+</component>
