@@ -7,7 +7,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.mainClass>org.dionysius.Launcher</project.mainClass>
-		<project.javaVersion>17</project.javaVersion>
+		<project.javaVersion>11</project.javaVersion>
 		<grpc.version>1.49.2</grpc.version>
 		<javafx.version>19</javafx.version>
 		<javafx.maven.plugin.version>0.0.6</javafx.maven.plugin.version>

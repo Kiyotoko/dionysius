@@ -1,4 +1,14 @@
 name: dionysius
 title: Dionysius
+summary: Top-down shooter
 version: '0.0.1'
 base: core18
+grade: devel
+confinement: devmode
+adopt-info: part-with-metadata
+parts: 
+  dionysius:
+    plugin: maven
+    source: https://github.com/karl-zschiebsch/dionysius.git
+    source-tag: master
+    maven-options: [] 
