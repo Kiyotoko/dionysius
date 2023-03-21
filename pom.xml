@@ -4,6 +4,12 @@
 	<artifactId>dionysius</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Demon</name>
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.mainClass>org.dionysius.Launcher</project.mainClass>
@@ -71,6 +77,11 @@
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-xml</artifactId>
 			<version>2.14.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.karl-zschiebsch</groupId>
+			<artifactId>util</artifactId>
+			<version>0.0.3-alpha</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>

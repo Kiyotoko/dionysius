@@ -7,7 +7,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 public class Character extends Group implements Switching<StatusReply.Character> {
 	private final Game game;
@@ -22,6 +25,9 @@ public class Character extends Group implements Switching<StatusReply.Character>
 		label.layoutXProperty().bind(label.widthProperty().divide(2).multiply(-1));
 		label.layoutYProperty().bind(label.heightProperty().multiply(-1));
 		label.textProperty().bind(name);
+		label.setTextFill(Color.WHITE);
+		label.setFont(Font.font("Ubuntu", FontWeight.BOLD, 13));
+		bound.setStrokeDashOffset(3);
 		getChildren().addAll(bound, new Circle(4), label);
 	}
 
@@ -36,9 +42,9 @@ public class Character extends Group implements Switching<StatusReply.Character>
 	@Override
 	public void switched(org.dionysius.grpc.StatusReply.Character associated) {
 		StatusReply.Character reply = (StatusReply.Character) associated;
-		setLayoutX(reply.getPosition().getX());
-		setLayoutY(reply.getPosition().getY());
+		setLayoutX((int) reply.getPosition().getX());
+		setLayoutY((int) reply.getPosition().getY());
 		name.set(associated.getName());
-		bound.setFill(game.getTeams().get(associated.getTeam()).getColor().get());
+		bound.setStroke(game.getTeams().get(associated.getTeam()).getColor().get());
 	}
 }

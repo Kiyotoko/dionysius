@@ -3,14 +3,14 @@ package org.dionysius.graphic;
 import java.util.Map;
 
 import org.dionysius.grpc.ActivationRequest;
+import org.dionysius.grpc.Corresponding;
+import org.dionysius.grpc.DemonClient;
 import org.dionysius.grpc.JoinReply;
 import org.dionysius.grpc.JoinRequest;
 import org.dionysius.grpc.LeaveRequest;
 import org.dionysius.grpc.MovementRequest;
 import org.dionysius.grpc.StatusReply;
 import org.dionysius.grpc.StatusRequest;
-import org.dionysius.grpc.Corresponding;
-import org.dionysius.grpc.DemonClient;
 
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -19,7 +19,6 @@ import javafx.scene.Camera;
 import javafx.scene.ParallelCamera;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Rectangle;
 
 public class Player extends Character {
 	private final DemonClient client;
@@ -32,9 +31,16 @@ public class Player extends Character {
 
 		Game game = client.getGame();
 		camera = new ParallelCamera();
-		camera.setClip(new Rectangle(200, 200));
-		camera.layoutXProperty().bind(layoutXProperty().subtract(1024 / 2));
-		camera.layoutYProperty().bind(layoutYProperty().subtract((768 - 24) / 2));
+		camera.setNearClip(1);
+		layoutXProperty().addListener((observable, o, n) -> {
+			camera.setLayoutX((int) (n.intValue() - 1024 / 2));
+		});
+		layoutYProperty().addListener((observable, o, n) -> {
+			camera.setLayoutY((int) (n.intValue() - (768 - 24) / 2));
+		});
+
+//		camera.layoutXProperty().bind(layoutXProperty().subtract((int)(1024 / 2)));
+//		camera.layoutYProperty().bind(layoutYProperty().subtract((768 - 24) / 2));
 		getMouseHandler().forEach((k, v) -> game.addEventHandler(k, v));
 		game.setCamera(camera);
 		game.getPlayer().set(this);

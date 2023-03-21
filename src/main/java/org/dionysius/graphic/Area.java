@@ -17,7 +17,7 @@ public final class Area extends Group implements Switching<StatusReply.Area> {
 	private final List<Polygon> insides = new ArrayList<>();
 
 	public Area() {
-		outsides.setFill(Color.WHITE);
+		outsides.setFill(Color.gray(0.35, 0.35));
 		getChildren().add(outsides);
 	}
 
@@ -42,8 +42,8 @@ public final class Area extends Group implements Switching<StatusReply.Area> {
 		if (grow(associated.getInsidesList().size()))
 			for (int i = 0; i < insides.size(); i++)
 				check(associated.getInsidesList().get(i), insides.get(i));
-		setLayoutX(associated.getPosition().getX());
-		setLayoutY(associated.getPosition().getY());
+		setLayoutX((int) associated.getPosition().getX());
+		setLayoutY((int) associated.getPosition().getY());
 	}
 
 	private static boolean check(org.dionysius.grpc.Polygon net, Polygon cur) {

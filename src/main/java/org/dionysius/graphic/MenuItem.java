@@ -47,8 +47,12 @@ public class MenuItem<T extends Node> extends StackPane {
 			getTop().setPromptText(promt.toUpperCase());
 			getTop().setFont(Font.font("Ubuntu", 16));
 			getTop().setFocusTraversable(false);
-			getTop().setStyle("-fx-background-color:#00000000;" + "-fx-background-insets: 0, 0 0 1 0;"
-					+ "-fx-background-radius: 0;" + "-fx-text-fill: #DC143C;");
+			getTop().setStyle(//
+					"-fx-background-color:#00000000;" //
+							+ "-fx-background-insets: 0, 0 0 1 0;"//
+							+ "-fx-background-radius: 0;" //
+							+ "-fx-text-fill: #DC143C;"//
+			);
 		}
 
 		public String getInput() {

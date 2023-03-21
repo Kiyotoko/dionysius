@@ -2,6 +2,7 @@ name: dionysius
 title: Dionysius
 summary: Top-down shooter
 version: '0.0.1'
+grade: devel
 base: core18
 grade: devel
 confinement: devmode
@@ -10,7 +11,8 @@ parts:
   dionysius:
     plugin: maven
     source: https://github.com/karl-zschiebsch/dionysius.git
-    maven-options: [] 
+    source-type: git
     source-tag: master
+    maven-options: [install]
     stage-packages: [openjdk-11-jre-headless]
     parse-info: [https://github.com/karl-zschiebsch/dionysius/blob/master/dionysius.metainfo.xml]

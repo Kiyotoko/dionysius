@@ -40,7 +40,7 @@ public class Game extends Scene {
 		characters.addListener(getChangeListener(entity));
 		actions.addListener(getChangeListener(entity));
 		areas.addListener(getChangeListener(constant));
-
+		
 		root.getChildren().addAll(constant, entity);
 		AnimationTimer timer = new AnimationTimer() {
 			final long[] frameTimes = new long[100];

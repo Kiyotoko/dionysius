@@ -42,14 +42,13 @@ public class Menu extends Scene {
 		join.setPadding(new Insets(32));
 
 		HBox box = new HBox(8);
-		box.setBackground(new Background(new BackgroundFill(Color.color(.2, .2, .8), null, null)));
 		box.setPadding(new Insets(32));
-
 		MenuButton singleplayer = new MenuButton("singleplayer".toUpperCase(), e -> root.setCenter(host));
 		MenuButton multiplayer = new MenuButton("multiplayer".toUpperCase(), e -> root.setCenter(join));
-
+		box.setBackground(new Background(new BackgroundFill(Color.gray(0.375), null, null)));
 		box.getChildren().addAll(singleplayer, multiplayer);
-		box.setBackground(new Background(new BackgroundFill(Color.color(.2, .2, .8), null, null)));
+
+		root.setBackground(new Background(new BackgroundFill(Color.gray(0.25), null, null)));
 		root.setTop(box);
 		box.setAlignment(Pos.TOP_LEFT);
 	}
