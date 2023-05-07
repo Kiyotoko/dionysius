@@ -1,85 +1,59 @@
 package org.dionysius.game;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.dionysius.grpc.PushHelper;
+import org.dionysius.content.Sykarus;
 
-import javafx.geometry.Point2D;
+import io.scvis.game.Entity;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableSet;
+import javafx.collections.SetChangeListener.Change;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 
 public class Game {
-	private final Clock clock = new Clock(new Runnable() {
-		@Override
-		public void run() {
-			for (int e = 0; e < entities.size(); e++) {
-				entities.get(e).update(1);
-			}
-		}
-	}, 5);
 
-	private final Map<Player, PushHelper> pushHelpers = new HashMap<>();
+	private Pane render = new Pane();
 
 	private final List<Entity> entities = new ArrayList<>();
-	private final List<Team> teams = new ArrayList<>();
-	private final List<Character> characters = new ArrayList<>();
-	private final List<Action> actions = new ArrayList<>();
-	private final List<Area> areas = new ArrayList<>();
+
+	private final ObservableSet<Creature> creatures = FXCollections.observableSet();
 
 	public Game() {
-		MapPack pack = null;
-		try {
-			pack = MapPack.load("src/main/resources/default.xml");
-		} catch (IOException e) {
-			pack = new MapPack(areas, teams);
-			e.printStackTrace();
-		}
+		Environment envi = Sykarus.SYKARUS_DAY;
+		render.getChildren().add(envi.getRender());
+		render.setBackground(new Background(new BackgroundFill(envi.getBackgroundColor(), null, null)));
 
-		this.teams.addAll(pack.getTeams());
-		this.areas.addAll(pack.getAreas());
-		for (int i = 0; i < 2; i++) {
-			new NPC(this);
-		}
+		creatures.addListener((Change<? extends Creature> change) -> {
+			if (change.wasAdded())
+				render.getChildren().add(change.getElementAdded().getMirror().getReflection());
+			if (change.wasRemoved())
+				render.getChildren().remove(change.getElementRemoved().getMirror().getReflection());
+			System.out.println(change);
+		});
+
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10.0), e -> {
+			for (int index = 0; index < entities.size(); index++)
+				entities.get(index).update(1.0);
+		}));
+		timeline.setCycleCount(Timeline.INDEFINITE);
+		timeline.play();
 	}
 
-	public boolean available(Point2D point) {
-		for (Area area : areas)
-			if (area.contains(point))
-				return true;
-		return false;
-	}
-
-	public Clock getClock() {
-		return clock;
-	}
-
-	public Map<Player, PushHelper> getPushHelpers() {
-		return pushHelpers;
+	public Pane getRender() {
+		return render;
 	}
 
 	public List<Entity> getEntities() {
 		return entities;
 	}
 
-	public Team getRandomTeam() {
-		return Area.pick(teams, (a, b) -> (int) (a.getMembers().size() - b.getMembers().size()));
-	}
-
-	public List<Team> getTeams() {
-		return teams;
-	}
-
-	public List<Character> getCharacters() {
-		return characters;
-	}
-
-	public List<Action> getActions() {
-		return actions;
-	}
-
-	public List<Area> getAreas() {
-		return areas;
+	public ObservableSet<Creature> getCreatures() {
+		return creatures;
 	}
 }
