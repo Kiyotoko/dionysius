@@ -33,8 +33,10 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 	private final Mirror<AnimatedGraphic, Pane> mirror = new Mirror<AnimatedGraphic, Pane>(this, new Pane(view)) {
 		@Override
 		public void update(AnimatedGraphic reference) {
-			getReflection().setLayoutX(reference.getPosition().getX() - getReflection().getWidth() / 2);
-			getReflection().setLayoutY(-reference.getPosition().getY() - getReflection().getHeight() / 2 + 300);
+			getReflection().setLayoutX(
+					reference.getPosition().getX() - (view.getImage() != null ? view.getImage().getWidth() : 0.0) / 2);
+			getReflection().setLayoutY(-reference.getPosition().getY()
+					- (view.getImage() != null ? view.getImage().getHeight() : 0.0) / 2 + 300);
 		}
 	};
 
@@ -42,21 +44,14 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 		this.game = game;
 		game.getEntities().add(this);
 		addInvalidationListener(observable -> mirror.update(this));
-		setAnimationPlayed(ANIMATION_IDLE);
 		this.setPosition(position);
 	}
-
-	private double animationTime = 0;
 
 	@Override
 	public void update(double deltaT) {
 		velocitate(deltaT);
 		displacement(deltaT);
-		animationTime += deltaT;
-		if (animationTime > 10) {
-			upsert();
-			animationTime -= 10;
-		}
+		animate(deltaT);
 	}
 
 	private final Set<InvalidationListener<AnimatedGraphic>> listeners = new HashSet<>();
@@ -76,15 +71,6 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 	@Override
 	public void removeInvalidationListener(InvalidationListener<AnimatedGraphic> listener) {
 		listeners.remove(listener);
-	}
-
-	public void upsert() {
-		List<Image> images = animations.get(animationPlayed);
-		int next = (getAnimationCount() + 1) % images.size();
-		if (next < animationCount && getAnimationPlayed() != ANIMATION_IDLE)
-			setAnimationPlayed(ANIMATION_IDLE);
-		else
-			setAnimationCount(next);
 	}
 
 	private byte direction = DIRECTION_RIGHT;
@@ -120,7 +106,6 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 
 	@Override
 	public void accelerate(double deltaT) {
-
 	}
 
 	@Override
@@ -133,6 +118,25 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 	public void displacement(double deltaT) {
 		setPosition(new Vector2D(clamp(0, 600, getPosition().getX() + getDestination().getX()),
 				clamp(0, 250, getPosition().getY() + getVelocity().getY())));
+	}
+
+	private double animationTime = 0;
+
+	public void animate(double deltaT) {
+		animationTime += deltaT;
+		if (animationTime > 10) {
+			rotate();
+			animationTime -= 10;
+		}
+	}
+
+	private void rotate() {
+		List<Image> images = animations.get(animationPlayed);
+		int next = (getAnimationCount() + 1) % images.size();
+		if (next < animationCount && getAnimationPlayed() != ANIMATION_IDLE)
+			setAnimationPlayed(ANIMATION_IDLE);
+		else
+			setAnimationCount(next);
 	}
 
 	private Vector2D velocity = Vector2D.ZERO;
@@ -185,10 +189,12 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 		return mirror;
 	}
 
-	private byte animationPlayed;
-	private int animationCount;
+	private byte animationPlayed = -1;
+	private int animationCount = -1;
 
 	public void setAnimationPlayed(byte animationPlayed) {
+		if (!animations.containsKey(animationPlayed))
+			return;
 		if (this.animationPlayed != animationPlayed) {
 			this.animationPlayed = animationPlayed;
 			setAnimationCount(0);
@@ -205,7 +211,11 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 
 	public void setAnimationCount(int animationCount) {
 		this.animationCount = animationCount;
-		view.setImage(animations.get(animationPlayed).get(animationCount));
+		Image next = animations.get(animationPlayed).get(animationCount);
+		if (view.getImage() != next) {
+			view.setImage(next);
+			invalidated();
+		}
 	}
 
 	public int getAnimationCount() {

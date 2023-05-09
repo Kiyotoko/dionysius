@@ -25,6 +25,6 @@ public class DroidZapper extends Creature {
 				idle.extract(0, 206, 35, 246)//
 		));
 		flip(DIRECTION_LEFT);
+		idle();
 	}
-
 }

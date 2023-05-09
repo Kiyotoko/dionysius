@@ -30,11 +30,14 @@ public class Game {
 		render.setBackground(new Background(new BackgroundFill(envi.getBackgroundColor(), null, null)));
 
 		creatures.addListener((Change<? extends Creature> change) -> {
-			if (change.wasAdded())
+			if (change.wasAdded()) {
 				render.getChildren().add(change.getElementAdded().getMirror().getReflection());
+				change.getElementAdded().invalidated();
+			}
 			if (change.wasRemoved())
 				render.getChildren().remove(change.getElementRemoved().getMirror().getReflection());
 			System.out.println(change);
+
 		});
 
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10.0), e -> {

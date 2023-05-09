@@ -42,12 +42,7 @@ public class Creature extends AnimatedGraphic {
 
 	public void dash() {
 		if (isInAnimationIdle()) {
-			System.out.println(getPosition());
-			System.out.println(125 * getDirection());
 			setPosition(getPosition().add(125 * getDirection(), 0));
-			setDestination(Vector2D.ZERO);
-			setVelocity(Vector2D.ZERO);
-			System.out.println(getPosition());
 			if (getAnimations().containsKey(ANIMATION_DASH))
 				setAnimationPlayed(ANIMATION_DASH);
 		}

@@ -86,7 +86,7 @@ public class Hero extends Creature {
 				attack2.extract(0, 325, 75, 351), //
 				attack2.extract(0, 352, 75, 378) //
 		));
-
+		idle();
 		System.out.println(getAnimations());
 	}
 
