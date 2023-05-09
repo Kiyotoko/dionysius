@@ -4,7 +4,6 @@ import javax.annotation.Nullable;
 
 import io.scvis.observable.Property;
 import io.scvis.proto.Mirror;
-import javafx.geometry.Insets;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -14,11 +13,12 @@ public class Health extends Property<Double> {
 	private final Creature creature;
 
 	private final Rectangle indicator = new Rectangle(100, 12, Color.RED);
+	private final Rectangle bar = new Rectangle(100, 12, Color.rgb(240, 240, 240, 0.15));
 
-	private final Mirror<Health, Pane> mirror = new Mirror<>(this, new Pane(indicator)) {
+	private final Mirror<Health, Pane> mirror = new Mirror<>(this, new Pane(indicator, bar)) {
 		@Override
 		public void update(Health reference) {
-			indicator.setWidth((int) max);
+			indicator.setWidth(reference.get().intValue());
 		}
 	};
 
@@ -28,7 +28,9 @@ public class Health extends Property<Double> {
 		this.min = 0;
 		this.max = max;
 
-		mirror.getReflection().setPadding(new Insets(6));
+		bar.setStroke(Color.gray(0.15));
+		mirror.getReflection().setLayoutX(10);
+		mirror.getReflection().setLayoutY(10);
 	}
 
 	public Creature getCreature() {

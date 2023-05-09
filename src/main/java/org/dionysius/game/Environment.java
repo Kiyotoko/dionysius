@@ -1,8 +1,8 @@
 package org.dionysius.game;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableSet;
-import javafx.collections.SetChangeListener.Change;
+import javafx.collections.ListChangeListener.Change;
+import javafx.collections.ObservableList;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -15,16 +15,19 @@ public class Environment {
 
 	private Pane render = new Pane();
 
-	private ObservableSet<StaticGraphic> graphics = FXCollections.observableSet();
+	private ObservableList<StaticGraphic> graphics = FXCollections.observableArrayList();
 
 	private Color backgroundColor = Color.TRANSPARENT;
 
 	public Environment() {
 		graphics.addListener((Change<? extends StaticGraphic> change) -> {
+			change.next();
 			if (change.wasAdded())
-				render.getChildren().add(change.getElementAdded().getMirror().getReflection());
+				for (int i = 0; i < change.getAddedSize(); i++)
+					render.getChildren().add(change.getAddedSubList().get(i).getMirror().getReflection());
 			if (change.wasRemoved())
-				render.getChildren().remove(change.getElementRemoved().getMirror().getReflection());
+				for (int i = 0; i < change.getAddedSize(); i++)
+					render.getChildren().add(change.getRemoved().get(i).getMirror().getReflection());
 			System.out.println(change);
 		});
 	}
@@ -33,14 +36,14 @@ public class Environment {
 		return render;
 	}
 
-	public ObservableSet<StaticGraphic> getGraphics() {
+	public ObservableList<StaticGraphic> getGraphics() {
 		return graphics;
 	}
 
 	public Color getBackgroundColor() {
 		return backgroundColor;
 	}
-	
+
 	public void setBackgroundColor(Color backgroundColor) {
 		this.backgroundColor = backgroundColor;
 	}

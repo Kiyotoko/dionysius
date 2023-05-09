@@ -18,10 +18,10 @@ public class Sykarus extends Environment {
 
 	public Sykarus(ImageExtractor extractor, Color background) {
 		getGraphics().addAll(Set.of(//
-				new StaticGraphic(extractor.extract(80, 16, 127, 63), 50, 100), //
-				new StaticGraphic(extractor.extract(193, 80, 271, 127), 175, 80), //
-				new StaticGraphic(extractor.extract(304, 112, 511, 118), 0, 0), //
-				new StaticGraphic(extractor.extract(448, 0, 511, 63), 380, 300) //
+				new StaticGraphic(extractor.extract(448, 0, 511, 63), 380, 20), //
+				new StaticGraphic(extractor.extract(80, 16, 127, 63), 50, 180), //
+				new StaticGraphic(extractor.extract(193, 80, 271, 127), 120, 210), //
+				new StaticGraphic(extractor.extract(304, 112, 511, 118), 0, 300)//
 		));
 		setBackgroundColor(background);
 	}

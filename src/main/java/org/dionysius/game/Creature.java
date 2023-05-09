@@ -1,6 +1,7 @@
 package org.dionysius.game;
 
-import io.scvis.geometry.Shape.Rectangle;
+import javax.annotation.Nonnull;
+
 import io.scvis.geometry.Vector2D;
 
 public class Creature extends AnimatedGraphic {
@@ -16,8 +17,8 @@ public class Creature extends AnimatedGraphic {
 
 	private final Health health = new Health(this, 20.0);
 
-	public Creature(Game game) {
-		super(game, new Rectangle(28, 15), Vector2D.ZERO);
+	public Creature(Game game, @Nonnull Vector2D position) {
+		super(game, position);
 		game.getCreatures().add(this);
 	}
 
@@ -39,18 +40,22 @@ public class Creature extends AnimatedGraphic {
 		}
 	}
 
-	public void dash(byte direction) {
+	public void dash() {
 		if (isInAnimationIdle()) {
-			setPosition(getPosition().add(new Vector2D(40 * direction, 0)));
+			System.out.println(getPosition());
+			System.out.println(125 * getDirection());
+			setPosition(getPosition().add(125 * getDirection(), 0));
+			setDestination(Vector2D.ZERO);
+			setVelocity(Vector2D.ZERO);
+			System.out.println(getPosition());
 			if (getAnimations().containsKey(ANIMATION_DASH))
 				setAnimationPlayed(ANIMATION_DASH);
-			flip(direction);
 		}
 	}
 
 	public void jump() {
 		if (isInAnimationIdle()) {
-			setVelocity(new Vector2D(0, 100));
+			setVelocity(new Vector2D(0, 20));
 			if (getAnimations().containsKey(ANIMATION_JUMP))
 				setAnimationPlayed(ANIMATION_JUMP);
 		}

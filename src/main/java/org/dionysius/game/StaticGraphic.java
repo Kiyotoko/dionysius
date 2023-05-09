@@ -20,9 +20,8 @@ public class StaticGraphic implements Observable<StaticGraphic> {
 	private final Mirror<StaticGraphic, ImageView> mirror = new Mirror<StaticGraphic, ImageView>() {
 		@Override
 		public void update(StaticGraphic reference) {
-			getReflection().setLayoutX((int) reference.getPosition().getX() - getReflection().getFitWidth() / 2);
-			getReflection()
-					.setLayoutY((int) -reference.getPosition().getY() - getReflection().getFitHeight() / 2 + 300);
+			getReflection().setLayoutX((int) reference.getPosition().getX());
+			getReflection().setLayoutY((int) reference.getPosition().getY());
 		}
 	};
 

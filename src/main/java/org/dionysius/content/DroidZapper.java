@@ -12,7 +12,7 @@ import javafx.scene.image.Image;
 public class DroidZapper extends Creature {
 
 	public DroidZapper(Game game) {
-		super(game);
+		super(game, new Vector2D(300, 0));
 
 		ImageExtractor idle = new ImageExtractor(new Image("art/creature/zapper/AnimationIdle.png").getPixelReader(),
 				3);
@@ -24,7 +24,6 @@ public class DroidZapper extends Creature {
 				idle.extract(0, 165, 35, 205), //
 				idle.extract(0, 206, 35, 246)//
 		));
-		setPosition(new Vector2D(300, 0));
 		flip(DIRECTION_LEFT);
 	}
 

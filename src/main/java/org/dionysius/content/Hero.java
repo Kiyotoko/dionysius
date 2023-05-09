@@ -7,6 +7,7 @@ import org.dionysius.game.Creature;
 import org.dionysius.game.Game;
 import org.dionysius.game.ImageExtractor;
 
+import io.scvis.geometry.Vector2D;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -16,7 +17,7 @@ import javafx.scene.input.MouseEvent;
 public class Hero extends Creature {
 
 	public Hero(Game game) {
-		super(game);
+		super(game, new Vector2D(100, 0));
 		game.getRender().getChildren().add(getHealth().getMirror().getReflection());
 
 		ImageExtractor moving = new ImageExtractor(new Image("art/creature/hero/AnimationMoving.png").getPixelReader(),
@@ -92,13 +93,19 @@ public class Hero extends Creature {
 	public void applyTo(Scene node) {
 		node.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
 			if (e.getCode() == KeyCode.A)
-				walk(AnimatedGraphic.DIRECTION_LEFT);
+				if (e.isShiftDown())
+					run(DIRECTION_LEFT);
+				else
+					walk(AnimatedGraphic.DIRECTION_LEFT);
 			if (e.getCode() == KeyCode.D)
-				walk(AnimatedGraphic.DIRECTION_RIGHT);
+				if (e.isShiftDown())
+					run(DIRECTION_RIGHT);
+				else
+					walk(AnimatedGraphic.DIRECTION_RIGHT);
 			if (e.getCode() == KeyCode.SPACE)
 				jump();
 			if (e.getCode() == KeyCode.SHIFT)
-				dash(getDirection());
+				dash();
 			if (e.getCode() == KeyCode.E)
 				attack1();
 			if (e.getCode() == KeyCode.F)

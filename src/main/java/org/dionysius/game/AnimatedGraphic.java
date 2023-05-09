@@ -8,8 +8,7 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import io.scvis.geometry.Border2D;
-import io.scvis.geometry.Kinetic2D;
+import io.scvis.geometry.Kinetic;
 import io.scvis.geometry.Vector2D;
 import io.scvis.observable.InvalidationListener;
 import io.scvis.observable.InvalidationListener.InvalidationEvent;
@@ -19,7 +18,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-public class AnimatedGraphic extends Kinetic2D implements Observable<AnimatedGraphic> {
+public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 
 	public static final byte ANIMATION_IDLE = 0;
 
@@ -35,23 +34,24 @@ public class AnimatedGraphic extends Kinetic2D implements Observable<AnimatedGra
 		@Override
 		public void update(AnimatedGraphic reference) {
 			getReflection().setLayoutX(reference.getPosition().getX() - getReflection().getWidth() / 2);
-			getReflection().setLayoutY(-reference.getPosition().getY() - getReflection().getHeight() + 350);
+			getReflection().setLayoutY(-reference.getPosition().getY() - getReflection().getHeight() / 2 + 300);
 		}
 	};
 
-	public AnimatedGraphic(Game game, @Nonnull Border2D local, @Nonnull Vector2D position) {
-		super(local, position, 0.0, Vector2D.ZERO, Vector2D.ZERO);
+	public AnimatedGraphic(Game game, @Nonnull Vector2D position) {
 		this.game = game;
 		game.getEntities().add(this);
-		addInvalidationListener(observable -> mirror.update(AnimatedGraphic.this));
+		addInvalidationListener(observable -> mirror.update(this));
 		setAnimationPlayed(ANIMATION_IDLE);
+		this.setPosition(position);
 	}
 
 	private double animationTime = 0;
 
 	@Override
 	public void update(double deltaT) {
-		super.update(deltaT);
+		velocitate(deltaT);
+		displacement(deltaT);
 		animationTime += deltaT;
 		if (animationTime > 10) {
 			upsert();
@@ -125,14 +125,48 @@ public class AnimatedGraphic extends Kinetic2D implements Observable<AnimatedGra
 
 	@Override
 	public void velocitate(double deltaT) {
-		setVelocity(new Vector2D(clamp(0, 100, getVelocity().getX()), clamp(-10, 10, getVelocity().getY() - deltaT)));
+		setVelocity(new Vector2D(clamp(-35, 35, getVelocity().getX() + getVelocity().getX()),
+				clamp(-35, 35, getVelocity().getY() + getDestination().getY() - deltaT)));
 	}
 
 	@Override
 	public void displacement(double deltaT) {
-		setPosition(new Vector2D(clamp(0, 500, getPosition().getX() + getDestination().getX() + getVelocity().getX()),
-				clamp(0, 200, getPosition().getY() + getVelocity().getY())));
-		invalidated();
+		setPosition(new Vector2D(clamp(0, 600, getPosition().getX() + getDestination().getX()),
+				clamp(0, 250, getPosition().getY() + getVelocity().getY())));
+	}
+
+	private Vector2D velocity = Vector2D.ZERO;
+
+	public void setVelocity(Vector2D velocity) {
+		this.velocity = velocity;
+	}
+
+	public Vector2D getVelocity() {
+		return velocity;
+	}
+
+	private Vector2D position = Vector2D.ZERO;
+
+	public void setPosition(Vector2D position) {
+		if (position.magnitude() != getPosition().magnitude()) {
+			System.out.println(position);
+			this.position = position;
+			invalidated();
+		}
+	}
+
+	public Vector2D getPosition() {
+		return position;
+	}
+
+	private Vector2D destination = Vector2D.ZERO;
+
+	public void setDestination(Vector2D destination) {
+		this.destination = destination;
+	}
+
+	public Vector2D getDestination() {
+		return destination;
 	}
 
 	public Game getGame() {
@@ -157,7 +191,7 @@ public class AnimatedGraphic extends Kinetic2D implements Observable<AnimatedGra
 	public void setAnimationPlayed(byte animationPlayed) {
 		if (this.animationPlayed != animationPlayed) {
 			this.animationPlayed = animationPlayed;
-			this.animationCount = 0;
+			setAnimationCount(0);
 		}
 	}
 
@@ -170,10 +204,8 @@ public class AnimatedGraphic extends Kinetic2D implements Observable<AnimatedGra
 	}
 
 	public void setAnimationCount(int animationCount) {
-		if (this.animationCount != animationCount) {
-			this.animationCount = animationCount;
-			view.setImage(animations.get(animationPlayed).get(animationCount));
-		}
+		this.animationCount = animationCount;
+		view.setImage(animations.get(animationPlayed).get(animationCount));
 	}
 
 	public int getAnimationCount() {
