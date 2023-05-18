@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>com.github.karl-zschiebsch</groupId>
 			<artifactId>scvis</artifactId>
-			<version>386ba3f</version>
+			<version>f3e6b63</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>

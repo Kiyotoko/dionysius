@@ -16,3 +16,7 @@ target
 
 # VS Code
 .vscode/*
+
+# snapcraft
+*.snap
+*.txt

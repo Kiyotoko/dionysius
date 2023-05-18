@@ -36,7 +36,7 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 			getReflection().setLayoutX(
 					reference.getPosition().getX() - (view.getImage() != null ? view.getImage().getWidth() : 0.0) / 2);
 			getReflection().setLayoutY(-reference.getPosition().getY()
-					- (view.getImage() != null ? view.getImage().getHeight() : 0.0) / 2 + 300);
+					- (view.getImage() != null ? view.getImage().getHeight() : 0.0) + 350);
 		}
 	};
 
@@ -77,7 +77,6 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 
 	public void flip(byte direction) {
 		if (this.direction != direction) {
-			setPosition(getPosition().add(new Vector2D(view.getFitWidth() * direction / -2.0, 0)));
 			view.setScaleX(direction);
 			this.direction = direction;
 		}
@@ -153,7 +152,6 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 
 	public void setPosition(Vector2D position) {
 		if (position.magnitude() != getPosition().magnitude()) {
-			System.out.println(position);
 			this.position = position;
 			invalidated();
 		}

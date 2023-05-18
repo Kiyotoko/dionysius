@@ -14,8 +14,8 @@ public class App extends Application {
 	public void start(Stage stage) throws Exception {
 		Game game = new Game();
 
-		Hero hero = new Hero(game);
 		new DroidZapper(game);
+		Hero hero = new Hero(game);
 
 		Scene scene = new Scene(game.getRender(), 600, 400);
 		hero.applyTo(scene);

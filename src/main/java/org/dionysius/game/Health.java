@@ -18,7 +18,7 @@ public class Health extends Property<Double> {
 	private final Mirror<Health, Pane> mirror = new Mirror<>(this, new Pane(indicator, bar)) {
 		@Override
 		public void update(Health reference) {
-			indicator.setWidth(reference.get().intValue());
+			indicator.setWidth(reference.get().doubleValue() / reference.getMax() * 100.0);
 		}
 	};
 
@@ -55,6 +55,7 @@ public class Health extends Property<Double> {
 	@Override
 	public void set(@Nullable Double value) {
 		super.set(capp(min, max, value == null ? 0.0 : value));
+		getMirror().update(this);
 	}
 
 	public void setMin(double min) {
