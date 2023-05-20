@@ -1,12 +1,14 @@
 package org.dionysius.game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Nonnull;
 
-import io.scvis.game.Destroyable;
 import io.scvis.game.Entity;
 import io.scvis.geometry.Vector2D;
 
-public class Creature extends AnimatedGraphic implements Destroyable {
+public class Creature extends AnimatedGraphic {
 
 	public static final byte ANIMATION_WALK = 10;
 	public static final byte ANIMATION_RUN = 11;
@@ -22,6 +24,9 @@ public class Creature extends AnimatedGraphic implements Destroyable {
 
 	private final Health health = new Health(this, 20.0);
 
+	private final List<Indicator> indicators = new ArrayList<>(
+			List.of(health.asIndicator(), new Indicator.PositionIndicator(this)));
+
 	public Creature(Game game, @Nonnull Vector2D position) {
 		super(game, position);
 		game.getCreatures().add(this);
@@ -33,6 +38,7 @@ public class Creature extends AnimatedGraphic implements Destroyable {
 
 	@Override
 	public void destroy() {
+		super.destroy();
 		getGame().getCreatures().remove(this);
 	}
 
@@ -40,21 +46,21 @@ public class Creature extends AnimatedGraphic implements Destroyable {
 		getHealth().set(getHealth().get() - value);
 	}
 
-	public void hit(double value) {
+	public void hit(Attack attack) {
 		for (int i = 0; i < getGame().getEntities().size(); i++) {
 			Entity entity = getGame().getEntities().get(i);
 			if (entity instanceof Creature) {
 				Creature creature = (Creature) entity;
-				if (creature != this && creature.getPosition().distance(getPosition()) < 20) {
+				if (creature != this && attack.canHit(getDirection(), getPosition(), creature.getPosition())) {
 					if (creature.isRolling()) {
 						continue;
 					} else if (creature.isBlocking()) {
-						creature.damage(value * 0.2);
-						damage(value * 0.2);
+						creature.damage(attack.getDamage() * 0.2);
+						damage(attack.getDamage() * 0.2);
 					} else if (creature.isEvading()) {
-						creature.damage(value * 1.2);
+						creature.damage(attack.getDamage() * 1.2);
 					} else {
-						creature.damage(value);
+						creature.damage(attack.getDamage());
 					}
 				}
 			}
@@ -97,7 +103,7 @@ public class Creature extends AnimatedGraphic implements Destroyable {
 
 	public void attack1() {
 		if (isInAnimationIdle()) {
-			hit(2);
+			hit(new Attack(4, 110, 90));
 			if (getAnimations().containsKey(ANIMATION_ATTACK_1))
 				setAnimationPlayed(ANIMATION_ATTACK_1);
 		}
@@ -105,7 +111,7 @@ public class Creature extends AnimatedGraphic implements Destroyable {
 
 	public void attack2() {
 		if (isInAnimationIdle()) {
-			hit(4);
+			hit(new Attack(3, 70, 125));
 			if (getAnimations().containsKey(ANIMATION_ATTACK_2))
 				setAnimationPlayed(ANIMATION_ATTACK_2);
 		}
@@ -113,7 +119,7 @@ public class Creature extends AnimatedGraphic implements Destroyable {
 
 	public void attack3() {
 		if (isInAnimationIdle()) {
-			hit(6);
+			hit(new Attack(8, 120, 90));
 			if (getAnimations().containsKey(ANIMATION_ATTACK_3))
 				setAnimationPlayed(ANIMATION_ATTACK_3);
 		}
@@ -144,8 +150,11 @@ public class Creature extends AnimatedGraphic implements Destroyable {
 	}
 
 	public void death() {
-		setAnimationPlayed(ANIMATION_DEATH);
-		destroy();
+		if (getAnimations().containsKey(ANIMATION_EVADE))
+			setAnimationPlayed(ANIMATION_DEATH);
+		else {
+			destroy();
+		}
 	}
 
 	public boolean isBlocking() {
@@ -158,6 +167,10 @@ public class Creature extends AnimatedGraphic implements Destroyable {
 
 	public boolean isEvading() {
 		return getAnimationPlayed() == ANIMATION_EVADE;
+	}
+
+	public List<Indicator> getIndicators() {
+		return indicators;
 	}
 
 	public Health getHealth() {

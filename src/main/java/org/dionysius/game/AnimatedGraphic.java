@@ -5,9 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
+import io.scvis.game.Destroyable;
 import io.scvis.geometry.Kinetic;
 import io.scvis.geometry.Vector2D;
 import io.scvis.observable.InvalidationListener;
@@ -18,25 +20,30 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
+public class AnimatedGraphic implements Kinetic, Destroyable, Observable<AnimatedGraphic> {
 
 	public static final byte ANIMATION_IDLE = 0;
 
 	public static final byte DIRECTION_LEFT = -1;
 	public static final byte DIRECTION_RIGHT = 1;
 
+	public static final Vector2D transform(double x, double y, double width, double height) {
+		return new Vector2D(x - width * 0.5, 350.0 - y - height);
+	}
+
 	private final Game game;
 
 	private final ImageView view = new ImageView();
-	private final Map<Byte, List<Image>> animations = new HashMap<>();
+	private final Map<Byte, List<AnimationFrame<AnimatedGraphic>>> animations = new HashMap<>();
 
 	private final Mirror<AnimatedGraphic, Pane> mirror = new Mirror<AnimatedGraphic, Pane>(this, new Pane(view)) {
 		@Override
 		public void update(AnimatedGraphic reference) {
-			getReflection().setLayoutX(
-					reference.getPosition().getX() - (view.getImage() != null ? view.getImage().getWidth() : 0.0) / 2);
-			getReflection().setLayoutY(-reference.getPosition().getY()
-					- (view.getImage() != null ? view.getImage().getHeight() : 0.0) + 350);
+			Vector2D transformed = transform(reference.getPosition().getX(), reference.getPosition().getY(),
+					view.getImage() != null ? view.getImage().getWidth() : 0.0,
+					view.getImage() != null ? view.getImage().getHeight() : 0.0);
+			getReflection().setLayoutX(transformed.getX());
+			getReflection().setLayoutY(transformed.getY());
 		}
 	};
 
@@ -52,6 +59,11 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 		velocitate(deltaT);
 		displacement(deltaT);
 		animate(deltaT);
+	}
+
+	@Override
+	public void destroy() {
+		game.getEntities().remove(this);
 	}
 
 	private final Set<InvalidationListener<AnimatedGraphic>> listeners = new HashSet<>();
@@ -123,14 +135,14 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 
 	public void animate(double deltaT) {
 		animationTime += deltaT;
-		if (animationTime > 10) {
+		if (animationTime > getAnimationDuration()) {
 			rotate();
-			animationTime -= 10;
+			animationTime = 0;
 		}
 	}
 
 	private void rotate() {
-		List<Image> images = animations.get(animationPlayed);
+		List<AnimationFrame<AnimatedGraphic>> images = animations.get(animationPlayed);
 		int next = (getAnimationCount() + 1) % images.size();
 		if (next < animationCount && getAnimationPlayed() != ANIMATION_IDLE)
 			setAnimationPlayed(ANIMATION_IDLE);
@@ -179,7 +191,7 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 		return view;
 	}
 
-	public Map<Byte, List<Image>> getAnimations() {
+	public Map<Byte, List<AnimationFrame<AnimatedGraphic>>> getAnimations() {
 		return animations;
 	}
 
@@ -209,14 +221,27 @@ public class AnimatedGraphic implements Kinetic, Observable<AnimatedGraphic> {
 
 	public void setAnimationCount(int animationCount) {
 		this.animationCount = animationCount;
-		Image next = animations.get(animationPlayed).get(animationCount);
+		Image next = getAnimationImage();
 		if (view.getImage() != next) {
 			view.setImage(next);
+			getAnimationOnPlayed().accept(this);
 			invalidated();
 		}
 	}
 
 	public int getAnimationCount() {
 		return animationCount;
+	}
+
+	public Image getAnimationImage() {
+		return animations.get(animationPlayed).get(animationCount).getImage();
+	}
+
+	public double getAnimationDuration() {
+		return animations.get(animationPlayed).get(animationCount).getDuration();
+	}
+
+	public Consumer<AnimatedGraphic> getAnimationOnPlayed() {
+		return animations.get(animationPlayed).get(animationCount).getOnPlayed();
 	}
 }

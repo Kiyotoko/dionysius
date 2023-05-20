@@ -32,10 +32,16 @@ public class Game {
 		creatures.addListener((Change<? extends Creature> change) -> {
 			if (change.wasAdded()) {
 				render.getChildren().add(change.getElementAdded().getMirror().getReflection());
+				for (Indicator indicator : change.getElementAdded().getIndicators()) {
+					render.getChildren().add(indicator.getReflection());
+				}
 				change.getElementAdded().invalidated();
-			}
-			if (change.wasRemoved())
+			} else if (change.wasRemoved()) {
 				render.getChildren().remove(change.getElementRemoved().getMirror().getReflection());
+				for (Indicator indicator : change.getElementRemoved().getIndicators()) {
+					render.getChildren().remove(indicator.getReflection());
+				}
+			}
 			System.out.println(change);
 
 		});

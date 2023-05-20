@@ -1,11 +1,15 @@
 package org.dionysius.content;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.dionysius.game.AnimatedGraphic;
+import org.dionysius.game.AnimationFrame;
+import org.dionysius.game.Attack;
 import org.dionysius.game.Creature;
 import org.dionysius.game.Game;
 import org.dionysius.game.ImageExtractor;
+import org.dionysius.game.Indicator.BarIndicator;
 
 import io.scvis.geometry.Vector2D;
 import javafx.scene.Scene;
@@ -16,17 +20,19 @@ import javafx.scene.input.MouseEvent;
 
 public class Hero extends Creature {
 
+	@SuppressWarnings("unchecked")
 	public Hero(Game game) {
 		super(game, new Vector2D(100, 0));
-		game.getRender().getChildren().add(getHealth().getMirror().getReflection());
+		getHealth().getIndicator().setClipp(new Vector2D(10, 10));
+		getHealth().getIndicator().setSize(BarIndicator.MEDIUM_SIZE);
 
 		ImageExtractor moving = new ImageExtractor(new Image("art/creature/hero/AnimationMoving.png").getPixelReader(),
 				3);
-		List<Image> movements = List.of( //
-				moving.extract(0, 0, 56, 27), //
-				moving.extract(0, 28, 56, 54), //
-				moving.extract(0, 55, 56, 81), //
-				moving.extract(0, 82, 56, 108)//
+		List<AnimationFrame<AnimatedGraphic>> movements = List.of( //
+				new AnimationFrame<>(moving.extract(0, 0, 56, 27), 10), //
+				new AnimationFrame<>(moving.extract(0, 28, 56, 54), 10), //
+				new AnimationFrame<>(moving.extract(0, 55, 56, 81), 10), //
+				new AnimationFrame<>(moving.extract(0, 82, 56, 108), 10)//
 		);
 		getAnimations().put(ANIMATION_IDLE, movements);
 		getAnimations().put(ANIMATION_WALK, movements);
@@ -34,57 +40,58 @@ public class Hero extends Creature {
 
 		ImageExtractor jump = new ImageExtractor(new Image("art/creature/hero/AnimationJump.png").getPixelReader(), 3);
 		getAnimations().put(ANIMATION_JUMP, List.of( //
-				jump.extract(0, 0, 56, 25), //
-				jump.extract(0, 26, 56, 49), //
-				jump.extract(0, 50, 56, 76), //
-				jump.extract(0, 77, 56, 103), //
-				jump.extract(0, 106, 56, 133), //
-				jump.extract(0, 134, 56, 161), //
-				jump.extract(0, 162, 56, 188)//
+				new AnimationFrame<>(jump.extract(0, 0, 56, 25), 10), //
+				new AnimationFrame<>(jump.extract(0, 26, 56, 49), 10), //
+				new AnimationFrame<>(jump.extract(0, 50, 56, 76), 10), //
+				new AnimationFrame<>(jump.extract(0, 77, 56, 103), 10), //
+				new AnimationFrame<>(jump.extract(0, 106, 56, 133), 10), //
+				new AnimationFrame<>(jump.extract(0, 134, 56, 161), 10), //
+				new AnimationFrame<>(jump.extract(0, 162, 56, 188), 10)//
 		));
 
 		ImageExtractor dash = new ImageExtractor(new Image("art/creature/hero/AnimationDash.png").getPixelReader(), 3);
 		getAnimations().put(ANIMATION_DASH, List.of(//
-				dash.extract(28, 0, 90, 27), //
-				dash.extract(28, 28, 90, 54), //
-				dash.extract(28, 55, 90, 81), //
-				dash.extract(28, 82, 90, 108)//
+				new AnimationFrame<>(dash.extract(28, 0, 90, 27), 10), //
+				new AnimationFrame<>(dash.extract(28, 28, 90, 54), 10), //
+				new AnimationFrame<>(dash.extract(28, 55, 90, 81), 10), //
+				new AnimationFrame<>(dash.extract(28, 82, 90, 108), 10)//
 		));
 
+		Consumer<Creature> attackRange = new Attack(1, 110, 90).asConsumer();
 		ImageExtractor attack1 = new ImageExtractor(
 				new Image("art/creature/hero/AnimationAttack1.png").getPixelReader(), 3);
-		getAnimations().put(ANIMATION_ATTACK_1, List.of( //
-				attack1.extract(0, 0, 75, 27), //
-				attack1.extract(0, 28, 75, 54), //
-				attack1.extract(0, 55, 75, 81), //
-				attack1.extract(0, 82, 75, 108), //
-				attack1.extract(0, 109, 75, 135), //
-				attack1.extract(0, 136, 75, 162), //
-				attack1.extract(0, 163, 75, 189), //
-				attack1.extract(0, 190, 75, 216), //
-				attack1.extract(0, 217, 75, 243), //
-				attack1.extract(0, 244, 75, 270), //
-				attack1.extract(0, 271, 75, 297), //
-				attack1.extract(0, 298, 75, 324) //
+		getAnimations().put(ANIMATION_ATTACK_1, (List<AnimationFrame<AnimatedGraphic>>) (List<?>) List.of( //
+				new AnimationFrame<>(attack1.extract(0, 0, 75, 27), 10), //
+				new AnimationFrame<>(attack1.extract(0, 28, 75, 54), 10), //
+				new AnimationFrame<>(attack1.extract(0, 55, 75, 81), 10), //
+				new AnimationFrame<>(attack1.extract(0, 82, 75, 108), 10), //
+				new AnimationFrame<>(attack1.extract(0, 109, 75, 135), 10, attackRange), //
+				new AnimationFrame<>(attack1.extract(0, 136, 75, 162), 10, attackRange), //
+				new AnimationFrame<>(attack1.extract(0, 163, 75, 189), 10, attackRange), //
+				new AnimationFrame<>(attack1.extract(0, 190, 75, 216), 10, attackRange), //
+				new AnimationFrame<>(attack1.extract(0, 217, 75, 243), 10, attackRange), //
+				new AnimationFrame<>(attack1.extract(0, 244, 75, 270), 10, attackRange), //
+				new AnimationFrame<>(attack1.extract(0, 271, 75, 297), 10), //
+				new AnimationFrame<>(attack1.extract(0, 298, 75, 324), 10) //
 		));
 
 		ImageExtractor attack2 = new ImageExtractor(
 				new Image("art/creature/hero/AnimationAttack2.png").getPixelReader(), 3);
 		getAnimations().put(ANIMATION_ATTACK_2, List.of( //
-				attack2.extract(0, 0, 75, 27), //
-				attack2.extract(0, 28, 75, 54), //
-				attack2.extract(0, 55, 75, 81), //
-				attack2.extract(0, 82, 75, 108), //
-				attack2.extract(0, 109, 75, 135), //
-				attack2.extract(0, 136, 75, 162), //
-				attack2.extract(0, 163, 75, 189), //
-				attack2.extract(0, 190, 75, 216), //
-				attack2.extract(0, 217, 75, 243), //
-				attack2.extract(0, 244, 75, 270), //
-				attack2.extract(0, 271, 75, 297), //
-				attack2.extract(0, 298, 75, 324), //
-				attack2.extract(0, 325, 75, 351), //
-				attack2.extract(0, 352, 75, 378) //
+				new AnimationFrame<>(attack2.extract(0, 0, 75, 27), 10), //
+				new AnimationFrame<>(attack2.extract(0, 28, 75, 54), 10), //
+				new AnimationFrame<>(attack2.extract(0, 55, 75, 81), 10), //
+				new AnimationFrame<>(attack2.extract(0, 82, 75, 108), 10), //
+				new AnimationFrame<>(attack2.extract(0, 109, 75, 135), 10), //
+				new AnimationFrame<>(attack2.extract(0, 136, 75, 162), 10), //
+				new AnimationFrame<>(attack2.extract(0, 163, 75, 189), 10), //
+				new AnimationFrame<>(attack2.extract(0, 190, 75, 216), 10), //
+				new AnimationFrame<>(attack2.extract(0, 217, 75, 243), 10), //
+				new AnimationFrame<>(attack2.extract(0, 244, 75, 270), 10), //
+				new AnimationFrame<>(attack2.extract(0, 271, 75, 297), 10), //
+				new AnimationFrame<>(attack2.extract(0, 298, 75, 324), 10), //
+				new AnimationFrame<>(attack2.extract(0, 325, 75, 351), 10), //
+				new AnimationFrame<>(attack2.extract(0, 352, 75, 378), 10) //
 		));
 		idle();
 		System.out.println(getAnimations());
