@@ -57,38 +57,40 @@ public class Hero extends Creature {
 				new AnimationFrame<>(dash.extract(28, 82, 90, 108), 10)//
 		));
 
-		Consumer<Creature> attackRange = new Attack(1, 110, 90).asConsumer();
+		Consumer<Creature> near = new Attack(1, 80, 90).asConsumer();
+		Consumer<Creature> range = new Attack(2, 130, 90).asConsumer();
 		ImageExtractor attack1 = new ImageExtractor(
 				new Image("art/creature/hero/AnimationAttack1.png").getPixelReader(), 3);
 		getAnimations().put(ANIMATION_ATTACK_1, (List<AnimationFrame<AnimatedGraphic>>) (List<?>) List.of( //
 				new AnimationFrame<>(attack1.extract(0, 0, 75, 27), 10), //
 				new AnimationFrame<>(attack1.extract(0, 28, 75, 54), 10), //
-				new AnimationFrame<>(attack1.extract(0, 55, 75, 81), 10), //
-				new AnimationFrame<>(attack1.extract(0, 82, 75, 108), 10), //
-				new AnimationFrame<>(attack1.extract(0, 109, 75, 135), 10, attackRange), //
-				new AnimationFrame<>(attack1.extract(0, 136, 75, 162), 10, attackRange), //
-				new AnimationFrame<>(attack1.extract(0, 163, 75, 189), 10, attackRange), //
-				new AnimationFrame<>(attack1.extract(0, 190, 75, 216), 10, attackRange), //
-				new AnimationFrame<>(attack1.extract(0, 217, 75, 243), 10, attackRange), //
-				new AnimationFrame<>(attack1.extract(0, 244, 75, 270), 10, attackRange), //
-				new AnimationFrame<>(attack1.extract(0, 271, 75, 297), 10), //
-				new AnimationFrame<>(attack1.extract(0, 298, 75, 324), 10) //
+				new AnimationFrame<>(attack1.extract(0, 55, 75, 81), 10, near), //
+				new AnimationFrame<>(attack1.extract(0, 82, 75, 108), 10, near), //
+				new AnimationFrame<>(attack1.extract(0, 109, 75, 135), 10, near), //
+				new AnimationFrame<>(attack1.extract(0, 136, 75, 162), 10, near), //
+				new AnimationFrame<>(attack1.extract(0, 163, 75, 189), 10), //
+				new AnimationFrame<>(attack1.extract(0, 190, 75, 216), 10), //
+				new AnimationFrame<>(attack1.extract(0, 217, 75, 243), 10), //
+				new AnimationFrame<>(attack1.extract(0, 244, 75, 270), 10), //
+				new AnimationFrame<>(attack1.extract(0, 271, 75, 297), 10, range), //
+				new AnimationFrame<>(attack1.extract(0, 298, 75, 324), 10, range) //
 		));
 
+		Consumer<Creature> charge = new Attack(6, 130, 90).asConsumer();
 		ImageExtractor attack2 = new ImageExtractor(
 				new Image("art/creature/hero/AnimationAttack2.png").getPixelReader(), 3);
-		getAnimations().put(ANIMATION_ATTACK_2, List.of( //
+		getAnimations().put(ANIMATION_ATTACK_2, (List<AnimationFrame<AnimatedGraphic>>) (List<?>) List.of( //
 				new AnimationFrame<>(attack2.extract(0, 0, 75, 27), 10), //
 				new AnimationFrame<>(attack2.extract(0, 28, 75, 54), 10), //
 				new AnimationFrame<>(attack2.extract(0, 55, 75, 81), 10), //
 				new AnimationFrame<>(attack2.extract(0, 82, 75, 108), 10), //
-				new AnimationFrame<>(attack2.extract(0, 109, 75, 135), 10), //
+				new AnimationFrame<>(attack2.extract(0, 109, 75, 135), 10, charge), //
 				new AnimationFrame<>(attack2.extract(0, 136, 75, 162), 10), //
 				new AnimationFrame<>(attack2.extract(0, 163, 75, 189), 10), //
 				new AnimationFrame<>(attack2.extract(0, 190, 75, 216), 10), //
 				new AnimationFrame<>(attack2.extract(0, 217, 75, 243), 10), //
 				new AnimationFrame<>(attack2.extract(0, 244, 75, 270), 10), //
-				new AnimationFrame<>(attack2.extract(0, 271, 75, 297), 10), //
+				new AnimationFrame<>(attack2.extract(0, 271, 75, 297), 10, charge), //
 				new AnimationFrame<>(attack2.extract(0, 298, 75, 324), 10), //
 				new AnimationFrame<>(attack2.extract(0, 325, 75, 351), 10), //
 				new AnimationFrame<>(attack2.extract(0, 352, 75, 378), 10) //

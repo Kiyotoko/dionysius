@@ -12,14 +12,14 @@ public class Creature extends AnimatedGraphic {
 
 	public static final byte ANIMATION_WALK = 10;
 	public static final byte ANIMATION_RUN = 11;
-	public static final byte ANIMATION_DASH = 12;
-	public static final byte ANIMATION_JUMP = 13;
+	public static final byte ANIMATION_JUMP = 12;
 	public static final byte ANIMATION_ATTACK_1 = 20;
 	public static final byte ANIMATION_ATTACK_2 = 21;
 	public static final byte ANIMATION_ATTACK_3 = 22;
 	public static final byte ANIMATION_BLOCK = 30;
 	public static final byte ANIMATION_ROLL = 31;
 	public static final byte ANIMATION_EVADE = 32;
+	public static final byte ANIMATION_DASH = 40;
 	public static final byte ANIMATION_DEATH = Byte.MAX_VALUE;
 
 	private final Health health = new Health(this, 20.0);
@@ -68,7 +68,7 @@ public class Creature extends AnimatedGraphic {
 	}
 
 	public void walk(byte direction) {
-		if (isInAnimationIdle()) {
+		if (hasHighterPriority(ANIMATION_WALK)) {
 			setDestination(new Vector2D(direction, 0));
 			if (getAnimations().containsKey(ANIMATION_WALK))
 				setAnimationPlayed(ANIMATION_WALK);
@@ -77,7 +77,7 @@ public class Creature extends AnimatedGraphic {
 	}
 
 	public void run(byte direction) {
-		if (isInAnimationIdle()) {
+		if (hasHighterPriority(ANIMATION_RUN)) {
 			setDestination(new Vector2D(2 * direction, 0));
 			if (getAnimations().containsKey(ANIMATION_RUN))
 				setAnimationPlayed(ANIMATION_RUN);
@@ -86,7 +86,7 @@ public class Creature extends AnimatedGraphic {
 	}
 
 	public void dash() {
-		if (isInAnimationIdle()) {
+		if (hasHighterPriority(ANIMATION_DASH)) {
 			setPosition(getPosition().add(125 * getDirection(), 0));
 			if (getAnimations().containsKey(ANIMATION_DASH))
 				setAnimationPlayed(ANIMATION_DASH);
@@ -94,7 +94,7 @@ public class Creature extends AnimatedGraphic {
 	}
 
 	public void jump() {
-		if (isInAnimationIdle()) {
+		if (hasHighterPriority(ANIMATION_JUMP)) {
 			setVelocity(new Vector2D(0, 20));
 			if (getAnimations().containsKey(ANIMATION_JUMP))
 				setAnimationPlayed(ANIMATION_JUMP);
@@ -102,38 +102,35 @@ public class Creature extends AnimatedGraphic {
 	}
 
 	public void attack1() {
-		if (isInAnimationIdle()) {
-			hit(new Attack(4, 110, 90));
+		if (hasHighterPriority(ANIMATION_ATTACK_1)) {
 			if (getAnimations().containsKey(ANIMATION_ATTACK_1))
 				setAnimationPlayed(ANIMATION_ATTACK_1);
 		}
 	}
 
 	public void attack2() {
-		if (isInAnimationIdle()) {
-			hit(new Attack(3, 70, 125));
+		if (hasHighterPriority(ANIMATION_ATTACK_2)) {
 			if (getAnimations().containsKey(ANIMATION_ATTACK_2))
 				setAnimationPlayed(ANIMATION_ATTACK_2);
 		}
 	}
 
 	public void attack3() {
-		if (isInAnimationIdle()) {
-			hit(new Attack(8, 120, 90));
+		if (hasHighterPriority(ANIMATION_ATTACK_3)) {
 			if (getAnimations().containsKey(ANIMATION_ATTACK_3))
 				setAnimationPlayed(ANIMATION_ATTACK_3);
 		}
 	}
 
 	public void block() {
-		if (isInAnimationIdle()) {
+		if (hasHighterPriority(ANIMATION_BLOCK)) {
 			if (getAnimations().containsKey(ANIMATION_BLOCK))
 				setAnimationPlayed(ANIMATION_BLOCK);
 		}
 	}
 
 	public void roll(byte direction) {
-		if (isInAnimationIdle()) {
+		if (hasHighterPriority(ANIMATION_ROLL)) {
 			setDestination(new Vector2D(.5 * direction, 0));
 			if (getAnimations().containsKey(ANIMATION_ROLL))
 				setAnimationPlayed(ANIMATION_BLOCK);
@@ -142,7 +139,7 @@ public class Creature extends AnimatedGraphic {
 	}
 
 	public void evade() {
-		if (isInAnimationIdle()) {
+		if (hasHighterPriority(ANIMATION_EVADE)) {
 			setDestination(new Vector2D(-3 * getDirection(), 0));
 			if (getAnimations().containsKey(ANIMATION_EVADE))
 				setAnimationPlayed(ANIMATION_EVADE);
@@ -150,7 +147,7 @@ public class Creature extends AnimatedGraphic {
 	}
 
 	public void death() {
-		if (getAnimations().containsKey(ANIMATION_EVADE))
+		if (getAnimations().containsKey(ANIMATION_DEATH))
 			setAnimationPlayed(ANIMATION_DEATH);
 		else {
 			destroy();

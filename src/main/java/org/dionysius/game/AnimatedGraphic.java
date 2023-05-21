@@ -219,6 +219,10 @@ public class AnimatedGraphic implements Kinetic, Destroyable, Observable<Animate
 		return animationPlayed == ANIMATION_IDLE;
 	}
 
+	public boolean hasHighterPriority(byte animation) {
+		return animation > animationPlayed;
+	}
+
 	public void setAnimationCount(int animationCount) {
 		this.animationCount = animationCount;
 		Image next = getAnimationImage();

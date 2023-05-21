@@ -57,6 +57,19 @@ public class DroidZapper extends Creature {
 				new AnimationFrame<>(attack1.extract(0, 370, 58, 410), 10, new Attack(1, 80, 90).asConsumer())//
 		));
 
+		ImageExtractor death = new ImageExtractor(new Image("art/creature/zapper/AnimationDeath.png").getPixelReader(),
+				3);
+		getAnimations().put(ANIMATION_DEATH, (List<AnimationFrame<AnimatedGraphic>>) (List<?>) List.of(//
+				new AnimationFrame<>(death.extract(0, 0, 58, 41), 10), //
+				new AnimationFrame<>(death.extract(0, 42, 58, 82), 14), //
+				new AnimationFrame<>(death.extract(0, 83, 58, 123), 12), //
+				new AnimationFrame<>(death.extract(0, 124, 58, 164), 12), //
+				new AnimationFrame<>(death.extract(0, 165, 58, 205), 12), //
+				new AnimationFrame<>(death.extract(0, 206, 58, 246), 12), //
+				new AnimationFrame<>(death.extract(0, 247, 58, 287), 12), //
+				new AnimationFrame<>(death.extract(0, 288, 58, 328), 10, t -> t.destroy())//
+		));
+
 		flip(DIRECTION_LEFT);
 		idle();
 	}
