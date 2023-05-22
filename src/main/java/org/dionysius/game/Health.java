@@ -1,5 +1,6 @@
 package org.dionysius.game;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.dionysius.game.Indicator.BarIndicator;
@@ -7,23 +8,31 @@ import org.dionysius.game.Indicator.BarIndicator;
 import io.scvis.observable.Property;
 import javafx.scene.paint.Color;
 
-public class Health extends Property<Double> {
+public class Health {
 
+	@Nonnull
 	private final Creature creature;
 
-	public Health(Creature creature, double max) {
-		super(max);
+	@Nonnull
+	private final Property<Double> val;
+	@Nonnull
+	private final Property<Double> max;
+
+	public Health(@Nonnull Creature creature, double max) {
+
 		this.creature = creature;
-		this.min = 0;
-		this.max = max;
+		this.val = new Property<>(max);
+		val.addChangeListener(e -> {
+			if (e.getNew() <= 0)
+				creature.death();
+		});
+		this.max = new Property<>(max);
 	}
 
+	@Nonnull
 	public Creature getCreature() {
 		return creature;
 	}
-
-	private double min;
-	private double max;
 
 	private static double capp(double min, double max, double value) {
 		if (value < min)
@@ -33,16 +42,38 @@ public class Health extends Property<Double> {
 		return value;
 	}
 
-	@Override
-	public void set(@Nullable Double value) {
-		super.set(capp(min, max, value == null ? 0.0 : value));
+	@Nonnull
+	public Property<Double> valueProperty() {
+		return val;
+	}
+
+	public void setValue(@Nullable Double value) {
+		val.set(capp(0.0, max.get(), value == null ? 0.0 : value));
+	}
+
+	public double getValue() {
+		return val.get();
+	}
+
+	@Nonnull
+	public Property<Double> maxProperty() {
+		return max;
+	}
+
+	public void setMax(double max) {
+		this.max.set(max);
+	}
+
+	public double getMax() {
+		return max.get();
 	}
 
 	private BarIndicator indicator;
 
+	@Nonnull
 	public BarIndicator asIndicator() {
 		if (indicator == null) {
-			indicator = new BarIndicator(creature, this, max);
+			indicator = new BarIndicator(creature, val, max);
 			indicator.setColor(Color.RED);
 		}
 		return indicator;
@@ -54,21 +85,5 @@ public class Health extends Property<Double> {
 
 	public BarIndicator getIndicator() {
 		return indicator;
-	}
-
-	public void setMin(double min) {
-		this.min = min;
-	}
-
-	public double getMin() {
-		return min;
-	}
-
-	public void setMax(double max) {
-		this.max = max;
-	}
-
-	public double getMax() {
-		return max;
 	}
 }

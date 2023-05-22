@@ -30,10 +30,6 @@ public class Creature extends AnimatedGraphic {
 	public Creature(Game game, @Nonnull Vector2D position) {
 		super(game, position);
 		game.getCreatures().add(this);
-		health.addChangeListener(e -> {
-			if (e.getNew() <= 0)
-				death();
-		});
 	}
 
 	@Override
@@ -43,7 +39,7 @@ public class Creature extends AnimatedGraphic {
 	}
 
 	public void damage(double value) {
-		getHealth().set(getHealth().get() - value);
+		getHealth().setValue(getHealth().getValue() - value);
 	}
 
 	public void hit(Attack attack) {

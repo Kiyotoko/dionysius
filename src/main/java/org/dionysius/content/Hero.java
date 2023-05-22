@@ -23,6 +23,8 @@ public class Hero extends Creature {
 	@SuppressWarnings("unchecked")
 	public Hero(Game game) {
 		super(game, new Vector2D(100, 0));
+		getHealth().setMax(60.0);
+		getHealth().setValue(60.0);
 		getHealth().getIndicator().setClipp(new Vector2D(10, 10));
 		getHealth().getIndicator().setSize(BarIndicator.MEDIUM_SIZE);
 

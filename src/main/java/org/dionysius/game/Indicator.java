@@ -29,7 +29,7 @@ public abstract class Indicator extends Mirror<Creature, Pane> {
 		private final Rectangle fill = new Rectangle(getWidth(), getHeight());
 		private final Rectangle edge = new Rectangle(getWidth(), getHeight(), Color.grayRgb(240, 0.15));
 
-		public BarIndicator(Creature creature, Property<? extends Number> property, double max) {
+		public BarIndicator(Creature creature, Property<? extends Number> val, Property<? extends Number> max) {
 			super(creature);
 			setColor(color);
 			edge.setStroke(Color.gray(0.15));
@@ -38,7 +38,8 @@ public abstract class Indicator extends Mirror<Creature, Pane> {
 				if (!isClipped())
 					update(creature);
 			});
-			property.addChangeListener((event) -> fill.setWidth(property.get().doubleValue() / max * getWidth()));
+			val.addChangeListener(
+					(event) -> fill.setWidth(val.get().doubleValue() / max.get().doubleValue() * getWidth()));
 			getReflection().getChildren().addAll(fill, edge);
 		}
 
