@@ -63,27 +63,25 @@ public class Creature extends AnimatedGraphic {
 		}
 	}
 
-	public void walk(byte direction) {
+	public void walk() {
 		if (hasHighterPriority(ANIMATION_WALK)) {
-			setDestination(new Vector2D(direction, 0));
+			setDestination(new Vector2D(getDirection(), 0));
 			if (getAnimations().containsKey(ANIMATION_WALK))
 				setAnimationPlayed(ANIMATION_WALK);
-			flip(direction);
 		}
 	}
 
-	public void run(byte direction) {
+	public void run() {
 		if (hasHighterPriority(ANIMATION_RUN)) {
-			setDestination(new Vector2D(2 * direction, 0));
+			setDestination(new Vector2D(2.0 * getDirection(), 0));
 			if (getAnimations().containsKey(ANIMATION_RUN))
 				setAnimationPlayed(ANIMATION_RUN);
-			flip(direction);
 		}
 	}
 
 	public void dash() {
 		if (hasHighterPriority(ANIMATION_DASH)) {
-			setPosition(getPosition().add(125 * getDirection(), 0));
+			setPosition(getPosition().add(125.0 * getDirection(), 0));
 			if (getAnimations().containsKey(ANIMATION_DASH))
 				setAnimationPlayed(ANIMATION_DASH);
 		}
@@ -125,12 +123,11 @@ public class Creature extends AnimatedGraphic {
 		}
 	}
 
-	public void roll(byte direction) {
+	public void roll() {
 		if (hasHighterPriority(ANIMATION_ROLL)) {
-			setDestination(new Vector2D(.5 * direction, 0));
+			setDestination(new Vector2D(.5 * getDirection(), 0));
 			if (getAnimations().containsKey(ANIMATION_ROLL))
 				setAnimationPlayed(ANIMATION_BLOCK);
-			flip(direction);
 		}
 	}
 

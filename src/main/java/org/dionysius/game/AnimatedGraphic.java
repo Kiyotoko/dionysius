@@ -94,6 +94,14 @@ public class AnimatedGraphic implements Kinetic, Destroyable, Observable<Animate
 		}
 	}
 
+	public void turn() {
+		if (direction == DIRECTION_LEFT) {
+			flip(DIRECTION_RIGHT);
+		} else {
+			flip(DIRECTION_LEFT);
+		}
+	}
+
 	public void idle() {
 		setDestination(Vector2D.ZERO);
 		setAnimationPlayed(ANIMATION_IDLE);
@@ -141,13 +149,14 @@ public class AnimatedGraphic implements Kinetic, Destroyable, Observable<Animate
 		}
 	}
 
-	private void rotate() {
+	protected void rotate() {
 		List<AnimationFrame<AnimatedGraphic>> images = animations.get(animationPlayed);
 		int next = (getAnimationCount() + 1) % images.size();
-		if (next < animationCount && getAnimationPlayed() != ANIMATION_IDLE)
+		if (next < animationCount && getAnimationPlayed() != ANIMATION_IDLE) {
 			setAnimationPlayed(ANIMATION_IDLE);
-		else
+		} else {
 			setAnimationCount(next);
+		}
 	}
 
 	private Vector2D velocity = Vector2D.ZERO;

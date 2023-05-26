@@ -103,16 +103,20 @@ public class Hero extends Creature {
 
 	public void applyTo(Scene node) {
 		node.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
-			if (e.getCode() == KeyCode.A)
+			if (e.getCode() == KeyCode.A) {
+				flip(DIRECTION_LEFT);
 				if (e.isShiftDown())
-					run(DIRECTION_LEFT);
+					run();
 				else
-					walk(AnimatedGraphic.DIRECTION_LEFT);
-			if (e.getCode() == KeyCode.D)
+					walk();
+			}
+			if (e.getCode() == KeyCode.D) {
+				flip(DIRECTION_RIGHT);
 				if (e.isShiftDown())
-					run(DIRECTION_RIGHT);
+					run();
 				else
-					walk(AnimatedGraphic.DIRECTION_RIGHT);
+					walk();
+			}
 			if (e.getCode() == KeyCode.SPACE)
 				jump();
 			if (e.getCode() == KeyCode.SHIFT)
