@@ -1,7 +1,8 @@
 package org.dionysius.content;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 
 import org.dionysius.game.AnimatedGraphic;
 import org.dionysius.game.AnimationFrame;
@@ -12,28 +13,27 @@ import io.scvis.geometry.Vector2D;
 
 public class Enemy extends Creature {
 
-	private final List<Runnable> patterns = new ArrayList<>();
+	private final Stack<Runnable> patterns = new Stack<>();
 
 	public Enemy(Game game, Vector2D position) {
 		super(game, position);
 		patterns.add(this::idle);
 	}
 
-	private int last;
-
 	@Override
 	protected void rotate() {
 		List<AnimationFrame<AnimatedGraphic>> images = getAnimations().get(getAnimationPlayed());
 		int next = (getAnimationCount() + 1) % images.size();
 		if (next < getAnimationCount() && getAnimationPlayed() != ANIMATION_DEATH) {
-			patterns.get(last++ % patterns.size()).run();
-			System.out.println(last % patterns.size());
+			Collections.rotate(patterns, 1);
+			patterns.peek().run();
 		} else {
 			setAnimationCount(next);
 		}
+
 	}
 
-	public List<Runnable> getPattern() {
+	public Stack<Runnable> getPattern() {
 		return patterns;
 	}
 }

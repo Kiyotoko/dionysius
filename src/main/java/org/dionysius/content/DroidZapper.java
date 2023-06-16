@@ -16,8 +16,7 @@ public class DroidZapper extends Enemy {
 	@SuppressWarnings("unchecked")
 	public DroidZapper(Game game) {
 		super(game, new Vector2D(300, 0));
-		getPattern().addAll(List.of(this::attack1, this::attack1, this::walk, this::walk, this::jump, this::jump,
-				this::dash, this::turn));
+		getPattern().addAll(List.of(this::attack1, this::walk, this::turn));
 
 		ImageExtractor idle = new ImageExtractor(new Image("art/creature/zapper/AnimationIdle.png").getPixelReader(),
 				3);
