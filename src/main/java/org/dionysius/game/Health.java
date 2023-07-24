@@ -3,9 +3,10 @@ package org.dionysius.game;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import org.dionysius.game.Indicator.BarIndicator;
 
-import io.scvis.observable.Property;
 import javafx.scene.paint.Color;
 
 public class Health {
@@ -14,19 +15,20 @@ public class Health {
 	private final Creature creature;
 
 	@Nonnull
-	private final Property<Double> val;
+	private final DoubleProperty val;
 	@Nonnull
-	private final Property<Double> max;
+	private final DoubleProperty max;
 
 	public Health(@Nonnull Creature creature, double max) {
 
 		this.creature = creature;
-		this.val = new Property<>(max);
-		val.addChangeListener(e -> {
-			if (e.getNew() <= 0)
+		this.val = new SimpleDoubleProperty(max);
+		val.addListener((observable, oldValue, newValue) -> {
+			if (newValue.doubleValue() <= 0) {
 				creature.death();
+			}
 		});
-		this.max = new Property<>(max);
+		this.max = new SimpleDoubleProperty(max);
 	}
 
 	@Nonnull
@@ -43,7 +45,7 @@ public class Health {
 	}
 
 	@Nonnull
-	public Property<Double> valueProperty() {
+	public DoubleProperty valueProperty() {
 		return val;
 	}
 
@@ -56,7 +58,7 @@ public class Health {
 	}
 
 	@Nonnull
-	public Property<Double> maxProperty() {
+	public DoubleProperty maxProperty() {
 		return max;
 	}
 
@@ -75,6 +77,8 @@ public class Health {
 		if (indicator == null) {
 			indicator = new BarIndicator(creature, val, max);
 			indicator.setColor(Color.RED);
+			indicator.getPane().setVisible(false);
+			val.addListener(invalidation -> indicator.getPane().setVisible(true));
 		}
 		return indicator;
 	}

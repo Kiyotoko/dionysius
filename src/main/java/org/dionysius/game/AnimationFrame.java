@@ -4,13 +4,13 @@ import java.util.function.Consumer;
 
 import javafx.scene.image.Image;
 
-public class AnimationFrame<T extends AnimatedGraphic> {
+public class AnimationFrame {
 
 	private Image image;
 	private double duration;
-	private Consumer<T> onPlayed;
+	private Consumer<Creature> onPlayed;
 
-	public AnimationFrame(Image image, double duration, Consumer<T> onPlayed) {
+	public AnimationFrame(Image image, double duration, Consumer<Creature> onPlayed) {
 		this.image = image;
 		this.duration = duration;
 		this.onPlayed = onPlayed;
@@ -22,7 +22,7 @@ public class AnimationFrame<T extends AnimatedGraphic> {
 		this.onPlayed = this::onPlayed;
 	}
 
-	protected void onPlayed(T graphic) {
+	protected void onPlayed(Creature graphic) {
 
 	}
 
@@ -42,11 +42,11 @@ public class AnimationFrame<T extends AnimatedGraphic> {
 		return duration;
 	}
 
-	public void setOnPlayed(Consumer<T> onPlayed) {
+	public void setOnPlayed(Consumer<Creature> onPlayed) {
 		this.onPlayed = onPlayed;
 	}
 
-	public Consumer<T> getOnPlayed() {
+	public Consumer<Creature> getOnPlayed() {
 		return onPlayed;
 	}
 }

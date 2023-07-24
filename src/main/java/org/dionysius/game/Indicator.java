@@ -1,63 +1,59 @@
 package org.dionysius.game;
 
 import io.scvis.geometry.Vector2D;
-import io.scvis.observable.Property;
-import io.scvis.proto.Mirror;
-import io.scvis.proto.Pair;
+import javafx.beans.property.DoubleProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Pair;
 
-public abstract class Indicator extends Mirror<Creature, Pane> {
+import javax.annotation.Nonnull;
 
-	protected Indicator(Creature creature) {
-		super(creature, new Pane());
+public abstract class Indicator {
+
+	@Nonnull
+	private final Creature creature;
+	@Nonnull
+	private final Pane pane = new Pane();
+	@Nonnull
+	private Vector2D position = Vector2D.ZERO;
+
+	protected Indicator(@Nonnull Creature creature) {
+		this.creature = creature;
 	}
 
 	public static class BarIndicator extends Indicator {
 
-		public static final Pair<Double, Double> SMALL_SIZE = new Pair<Double, Double>(70.0, 7.0);
-		public static final Pair<Double, Double> MEDIUM_SIZE = new Pair<Double, Double>(120.0, 12.0);
-		public static final Pair<Double, Double> LARGE_SIZE = new Pair<Double, Double>(170.0, 17.0);
-		public static final Pair<Double, Double> ULTRA_SIZE = new Pair<Double, Double>(450.0, 30.0);
+		public static final Pair<Double, Double> SMALL_SIZE = new Pair<>(70.0, 7.0);
+		public static final Pair<Double, Double> MEDIUM_SIZE = new Pair<>(120.0, 12.0);
+		public static final Pair<Double, Double> LARGE_SIZE = new Pair<>(170.0, 17.0);
+		public static final Pair<Double, Double> ULTRA_SIZE = new Pair<>(450.0, 30.0);
 
 		private Pair<Double, Double> size = SMALL_SIZE;
 		private Color color = Color.LIGHTCORAL;
-		private Vector2D clipp = null;
+		private Vector2D clip = null;
 
 		private final Rectangle fill = new Rectangle(getWidth(), getHeight());
 		private final Rectangle edge = new Rectangle(getWidth(), getHeight(), Color.grayRgb(240, 0.15));
 
-		public BarIndicator(Creature creature, Property<? extends Number> val, Property<? extends Number> max) {
+		public BarIndicator(Creature creature, DoubleProperty val, DoubleProperty max) {
 			super(creature);
 			setColor(color);
 			edge.setStroke(Color.gray(0.15));
 
-			creature.addInvalidationListener((event) -> {
-				if (!isClipped())
-					update(creature);
-			});
-			val.addChangeListener(
-					(event) -> fill.setWidth(val.get().doubleValue() / max.get().doubleValue() * getWidth()));
-			getReflection().getChildren().addAll(fill, edge);
+			val.addListener(
+					(event) -> fill.setWidth(val.doubleValue() / max.doubleValue() * getWidth()));
+			getPane().getChildren().addAll(fill, edge);
 		}
 
-		public BarIndicator(Creature creature, Property<? extends Number> property, double max, Vector2D clipp) {
+		public BarIndicator(Creature creature, DoubleProperty property, double max, Vector2D clipp) {
 			super(creature);
 			setColor(color);
 			edge.setStroke(Color.gray(0.15));
 
-			property.addChangeListener((event) -> fill.setWidth(property.get().doubleValue() / max * getWidth()));
-			getReflection().getChildren().addAll(fill, edge);
-		}
-
-		@Override
-		public void update(Creature reference) {
-			Vector2D transformed = Creature.transform(reference.getPosition().getX(), reference.getPosition().getY(),
-					getWidth(), getHeight());
-			getReflection().setLayoutX(transformed.getX());
-			getReflection().setLayoutY(transformed.getY());
+			property.addListener((observable, newValue, oldValue) -> fill.setWidth(newValue.doubleValue() / max * getWidth()));
+			getPane().getChildren().addAll(fill, edge);
 		}
 
 		public Pair<Double, Double> getSize() {
@@ -73,11 +69,11 @@ public abstract class Indicator extends Mirror<Creature, Pane> {
 		}
 
 		public double getWidth() {
-			return getSize().getLeft();
+			return getSize().getKey();
 		}
 
 		public double getHeight() {
-			return getSize().getRight();
+			return getSize().getValue();
 		}
 
 		public Color getColor() {
@@ -90,37 +86,66 @@ public abstract class Indicator extends Mirror<Creature, Pane> {
 		}
 
 		public boolean isClipped() {
-			return clipp != null;
+			return clip != null;
 		}
 
-		public void setClipp(Vector2D clipp) {
-			this.clipp = clipp;
-			getReflection().setLayoutX(clipp.getX());
-			getReflection().setLayoutY(clipp.getY());
+		public void setClip(Vector2D clip) {
+			this.clip = clip;
+			getPane().setLayoutX(clip.getX());
+			getPane().setLayoutY(clip.getY());
+			getPane().setVisible(true);
 		}
 
-		public Vector2D getClipp() {
-			return clipp;
+		public Vector2D getClip() {
+			return clip;
+		}
+
+		@Override
+		public void setPosition(@Nonnull Vector2D position) {
+			super.setPosition(position);
+			if (!isClipped()) {
+				Vector2D transformed = Creature.transform(position.getX(), position.getY(),
+						getWidth(), getHeight());
+				getPane().setLayoutX(transformed.getX());
+				getPane().setLayoutY(transformed.getY());
+			}
 		}
 	}
-
 	public static class PositionIndicator extends Indicator {
 
 		protected PositionIndicator(Creature creature) {
 			super(creature);
 
-			creature.addInvalidationListener((event) -> update(creature));
-			getReflection().getChildren()
+			getPane().getChildren()
 					.add(new Circle(5.0, new Color(Math.random(), Math.random(), Math.random(), 1.0)));
 		}
 
 		@Override
-		public void update(Creature reference) {
-			Vector2D transformed = Creature.transform(reference.getPosition().getX(), reference.getPosition().getY(),
-					0.0, 0.0);
-			getReflection().setLayoutX(transformed.getX());
-			getReflection().setLayoutY(transformed.getY());
+		public void setPosition(@Nonnull Vector2D position) {
+			super.setPosition(position);
+			Vector2D transformed = Creature.transform(position.getX(), position.getY(),
+					0, 0);
+			getPane().setLayoutX(transformed.getX());
+			getPane().setLayoutY(transformed.getY());
 		}
+	}
 
+	@Nonnull
+	public Creature getCreature() {
+		return creature;
+	}
+
+	@Nonnull
+	public Pane getPane() {
+		return pane;
+	}
+
+	public void setPosition(@Nonnull Vector2D position) {
+		this.position = position;
+	}
+
+	@Nonnull
+	public Vector2D getPosition() {
+		return position;
 	}
 }

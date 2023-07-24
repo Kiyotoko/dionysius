@@ -3,7 +3,8 @@
 	<groupId>org.dionysius</groupId>
 	<artifactId>dionysius</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Demon</name>
+	<name>Dionysius</name>
+	<packaging>jar</packaging>
 	<repositories>
 		<repository>
 			<id>jitpack.io</id>
@@ -52,9 +53,14 @@
 			<version>${version.javafx}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.10.1</version>
+		</dependency>
+		<dependency>
 			<groupId>com.github.karl-zschiebsch</groupId>
 			<artifactId>scvis</artifactId>
-			<version>f3e6b63</version>
+			<version>43b4268</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>

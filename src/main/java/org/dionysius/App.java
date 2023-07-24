@@ -1,26 +1,25 @@
 package org.dionysius;
 
-import org.dionysius.content.DroidZapper;
-import org.dionysius.content.Hero;
+import javafx.scene.layout.Pane;
+import org.dionysius.content.*;
 import org.dionysius.game.Game;
 
 import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
 public class App extends Application {
 	@Override
-	public void start(Stage stage) throws Exception {
-		Game game = new Game();
-
+	public void start(Stage stage) {
+		Game game = new Game(new Pane(), 600.0, 400.0);
+		game.setEnvironment(Sykarus.SYKARUS_DAY);
 		new DroidZapper(game);
-		Hero hero = new Hero(game);
+		new Merchant(game);
+		new ShieldDroid(game);
+		new Hero(game);
 
-		Scene scene = new Scene(game.getRender(), 600, 400);
-		hero.applyTo(scene);
-		stage.setScene(scene);
-		stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+		stage.setScene(game);
+		stage.setResizable(false);
 		stage.show();
 	}
 }

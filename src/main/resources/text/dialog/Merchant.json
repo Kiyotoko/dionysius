@@ -1,0 +1,34 @@
+{
+  "dialogs": [
+    {
+      "text": "Welcome in Sykarus, traveler!",
+      "preview": "Don't need more to know.",
+      "connections": [1, 2, 3]
+    },
+    {
+      "text": "A old city, a old war ... Is there more to know?",
+      "preview": "What happened here?",
+      "connections": [4, 5]
+    },
+    {
+      "text": "The ruins of the dead.",
+      "preview": "What are the buildings?",
+      "connections": [0]
+    },
+    {
+      "text": "",
+      "preview": "End",
+      "connections": []
+    },
+    {
+      "text": "Dionysius, Lord of the fallen, conquered Sykarus in his last war. Since then, Sykarus is a city of blood and death.",
+      "preview": "Yes!",
+      "connections": [0]
+    },
+    {
+      "text": "Then you guess right.",
+      "preview": "I guess no ...",
+      "connections": [0]
+    }
+  ]
+}

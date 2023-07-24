@@ -1,0 +1,37 @@
+{
+  "animations": {
+    "0": {
+      "path": "art/creature/merchant/AnimationIdle.png",
+      "frames": [
+        {
+          "startX": 0,
+          "startY": 0,
+          "endX": 64,
+          "endY": 50,
+          "duration": 15.0
+        },
+        {
+          "startX": 65,
+          "startY": 0,
+          "endX": 128,
+          "endY": 50,
+          "duration": 15.0
+        },
+        {
+          "startX": 129,
+          "startY": 0,
+          "endX": 192,
+          "endY": 50,
+          "duration": 15.0
+        },
+        {
+          "startX": 193,
+          "startY": 0,
+          "endX": 256,
+          "endY": 50,
+          "duration": 15.0
+        }
+      ]
+    }
+  }
+}

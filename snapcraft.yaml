@@ -12,7 +12,6 @@ apps:
     - gnome-3-28
 grade: devel
 base: core18
-grade: devel
 parts: 
   dionysius:
     plugin: maven

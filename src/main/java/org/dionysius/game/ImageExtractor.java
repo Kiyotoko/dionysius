@@ -5,30 +5,33 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
+import javax.annotation.Nonnull;
+
 public class ImageExtractor {
 
-	private final PixelReader reader;
+	private final @Nonnull PixelReader reader;
 
 	private int scale;
 
-	public ImageExtractor(PixelReader reader, int scale) {
+	public ImageExtractor(@Nonnull PixelReader reader, int scale) {
 		this.reader = reader;
 		this.scale = scale;
 	}
 
-	public Image extract(final int stx, final int sty, final int endx, final int endy) {
-		int width = (endx - stx) * scale;
-		int height = (endy - sty) * scale;
+	@Nonnull
+	public Image extract(final int stX, final int stY, final int endX, final int endY) {
+		int width = (endX - stX) * scale;
+		int height = (endY - stY) * scale;
 
 		WritableImage extracted = new WritableImage(width, height);
 		PixelWriter writer = extracted.getPixelWriter();
 
-		for (int y = sty; y < endy; y++) {
-			for (int x = stx; x < endx; x++) {
+		for (int y = stY; y < endY; y++) {
+			for (int x = stX; x < endX; x++) {
 				int argb = reader.getArgb(x, y);
 				for (int wy = 0; wy < scale; wy++) {
 					for (int wx = 0; wx < scale; wx++) {
-						writer.setArgb((x - stx) * scale + wx, (y - sty) * scale + wy, argb);
+						writer.setArgb((x - stX) * scale + wx, (y - stY) * scale + wy, argb);
 					}
 				}
 			}
@@ -37,4 +40,16 @@ public class ImageExtractor {
 		return extracted;
 	}
 
+	@Nonnull
+	public PixelReader getReader() {
+		return reader;
+	}
+
+	public void setScale(int scale) {
+		this.scale = scale;
+	}
+
+	public int getScale() {
+		return scale;
+	}
 }
