@@ -1,6 +1,7 @@
 package org.dionysius.content;
 
 import io.scvis.geometry.Vector2D;
+import javafx.scene.Camera;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -8,6 +9,7 @@ import javafx.scene.input.MouseEvent;
 import org.dionysius.game.*;
 import org.dionysius.game.Indicator.BarIndicator;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -88,5 +90,14 @@ public class Hero extends Creature {
         });
         node.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
         });
+    }
+
+    @Override
+    public void setPosition(@Nonnull Vector2D position) {
+        super.setPosition(position);
+
+        Camera camera = getGame().getFocusCamera();
+        camera.setLayoutX(position.getX() - getGame().getWidth() / 2);
+        camera.setLayoutY(-position.getY());
     }
 }

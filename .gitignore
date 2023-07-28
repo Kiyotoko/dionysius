@@ -1,9 +1,6 @@
 # reduced pom
 dependency-reduced-pom.xml
 
-# test folder
-src/test
-
 # generated classes
 target
 *.class

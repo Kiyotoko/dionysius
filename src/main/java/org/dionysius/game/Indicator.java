@@ -19,6 +19,9 @@ public abstract class Indicator {
 	@Nonnull
 	private Vector2D position = Vector2D.ZERO;
 
+	private Vector2D clip = null;
+
+
 	protected Indicator(@Nonnull Creature creature) {
 		this.creature = creature;
 	}
@@ -32,7 +35,6 @@ public abstract class Indicator {
 
 		private Pair<Double, Double> size = SMALL_SIZE;
 		private Color color = Color.LIGHTCORAL;
-		private Vector2D clip = null;
 
 		private final Rectangle fill = new Rectangle(getWidth(), getHeight());
 		private final Rectangle edge = new Rectangle(getWidth(), getHeight(), Color.grayRgb(240, 0.15));
@@ -85,21 +87,6 @@ public abstract class Indicator {
 			fill.setFill(color);
 		}
 
-		public boolean isClipped() {
-			return clip != null;
-		}
-
-		public void setClip(Vector2D clip) {
-			this.clip = clip;
-			getPane().setLayoutX(clip.getX());
-			getPane().setLayoutY(clip.getY());
-			getPane().setVisible(true);
-		}
-
-		public Vector2D getClip() {
-			return clip;
-		}
-
 		@Override
 		public void setPosition(@Nonnull Vector2D position) {
 			super.setPosition(position);
@@ -148,4 +135,21 @@ public abstract class Indicator {
 	public Vector2D getPosition() {
 		return position;
 	}
+
+
+	public boolean isClipped() {
+		return clip != null;
+	}
+
+	public void setClip(Vector2D clip) {
+		this.clip = clip;
+		getPane().setLayoutX(clip.getX());
+		getPane().setLayoutY(clip.getY());
+		getPane().setVisible(true);
+	}
+
+	public Vector2D getClip() {
+		return clip;
+	}
+
 }

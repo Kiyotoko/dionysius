@@ -10,7 +10,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
+import javafx.scene.Camera;
+import javafx.scene.ParallelCamera;
 import javafx.scene.Scene;
+import javafx.scene.SubScene;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
@@ -31,47 +34,72 @@ public class Game extends Scene {
     }));
 
     private final @Nonnull ObservableList<Creature> creatures = FXCollections.observableArrayList();
-    private final @Nonnull ObjectProperty<Level> environment = new SimpleObjectProperty<>();
+    private final @Nonnull ObjectProperty<Level> level = new SimpleObjectProperty<>();
     private final @Nonnull ObjectProperty<DialogBox> dialog = new SimpleObjectProperty<>();
+
+    private final @Nonnull Camera focusCamera = new ParallelCamera();
 
     public Game(final @Nonnull Pane root, double width, double height) {
         super(root, width, height);
 
-        environment.addListener((ObservableValue<? extends Level> observableValue, @Nullable Level oldValue,
-                                 @Nullable Level newValue) -> {
+        Pane overlay = new Pane();
+        Pane content = new Pane();
+
+        Pane background = new Pane();
+        Pane foreground = new Pane();
+        content.getChildren().addAll(background, foreground);
+
+        SubScene subScene = new SubScene(content, width, height);
+        subScene.setCamera(focusCamera);
+
+        root.getChildren().addAll(subScene, overlay);
+
+        level.addListener((ObservableValue<? extends Level> observableValue, @Nullable Level oldValue,
+                           @Nullable Level newValue) -> {
             if (oldValue != null) {
-                root.getChildren().remove(oldValue);
+                background.getChildren().remove(oldValue);
             }
             if (newValue != null) {
-                root.getChildren().add(newValue);
-                root.setBackground(new Background(new BackgroundFill(newValue.getBackgroundColor(),
+                background.getChildren().add(newValue);
+                content.setBackground(new Background(new BackgroundFill(newValue.getBackgroundColor(),
                         null, null)));
+                subScene.setFill(newValue.getBackgroundColor());
             }
         });
         dialog.addListener((ObservableValue<? extends DialogBox> observableValue, @Nullable DialogBox oldValue,
                             @Nullable DialogBox newValue) -> {
             if (oldValue != null) {
-                root.getChildren().remove(oldValue);
+                overlay.getChildren().remove(oldValue);
             }
             if (newValue != null) {
-                root.getChildren().add(newValue);
+                overlay.getChildren().add(newValue);
             }
         });
         creatures.addListener((Change<? extends Creature> change) -> {
             change.next();
             if (change.wasAdded()) {
                 for (Creature creature : change.getAddedSubList()) {
-                    root.getChildren().add(creature.getPane());
-                    for (Indicator indicator : creature.getIndicators()) {
-                        root.getChildren().add(indicator.getPane());
-                    }
-                    Platform.runLater(creature::reposition);
+                    foreground.getChildren().add(creature.getPane());
+                    Platform.runLater(() -> {
+                        for (Indicator indicator : creature.getIndicators()) {
+                                if (indicator.isClipped()) {
+                                    overlay.getChildren().add(indicator.getPane());
+                                } else {
+                                    foreground.getChildren().add(indicator.getPane());
+                                }
+                        }
+                        creature.reposition();
+                    });
                 }
             } else if (change.wasRemoved()) {
                 for (Creature creature : change.getRemoved()) {
-                    root.getChildren().remove(creature.getPane());
+                    foreground.getChildren().remove(creature.getPane());
                     for (Indicator indicator : creature.getIndicators()) {
-                        root.getChildren().remove(indicator.getPane());
+                        if (indicator.isClipped()) {
+                            overlay.getChildren().remove(indicator.getPane());
+                        } else {
+                            foreground.getChildren().remove(indicator.getPane());
+                        }
                     }
                 }
             }
@@ -97,12 +125,12 @@ public class Game extends Scene {
     }
 
 	@Nullable
-    public Level getEnvironment() {
-        return environment.getValue();
+    public Level getLevel() {
+        return level.getValue();
     }
 
-    public void setEnvironment(@Nullable Level environment) {
-        this.environment.setValue(environment);
+    public void setLevel(@Nullable Level level) {
+        this.level.setValue(level);
     }
 
 	@Nullable
@@ -112,5 +140,10 @@ public class Game extends Scene {
 
     public void setDialog(@Nullable DialogBox dialog) {
         this.dialog.setValue(dialog);
+    }
+
+    @Nonnull
+    public Camera getFocusCamera() {
+        return focusCamera;
     }
 }
