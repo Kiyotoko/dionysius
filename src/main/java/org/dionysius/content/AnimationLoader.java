@@ -25,8 +25,8 @@ public class AnimationLoader {
 
         private transient Image frame;
 
-        public void load(AnimationSource source) {
-            frame = source.getExtractor().extract(startX, startY, endX, endY);
+        public void load(ImageExtractor extractor) {
+            frame = extractor.extract(startX, startY, endX, endY);
         }
 
         public Image getFrame() {
@@ -51,7 +51,7 @@ public class AnimationLoader {
 
         public void preload() {
             for (FrameSource frame : frames) {
-                frame.load(this);
+                frame.load(getExtractor());
             }
         }
 

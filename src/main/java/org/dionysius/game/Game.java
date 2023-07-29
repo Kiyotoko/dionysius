@@ -17,6 +17,7 @@ import javafx.scene.SubScene;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import javax.annotation.Nonnull;
@@ -52,17 +53,22 @@ public class Game extends Scene {
         SubScene subScene = new SubScene(content, width, height);
         subScene.setCamera(focusCamera);
 
+        content.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT,
+                null, null)));
+
         root.getChildren().addAll(subScene, overlay);
 
         level.addListener((ObservableValue<? extends Level> observableValue, @Nullable Level oldValue,
                            @Nullable Level newValue) -> {
             if (oldValue != null) {
-                background.getChildren().remove(oldValue);
+                for (Level.Tile tile : oldValue.getTileMap()) {
+                    background.getChildren().remove(tile.getView());
+                }
             }
             if (newValue != null) {
-                background.getChildren().add(newValue);
-                content.setBackground(new Background(new BackgroundFill(newValue.getBackgroundColor(),
-                        null, null)));
+                for (Level.Tile tile : newValue.getTileMap()) {
+                    background.getChildren().add(tile.getView());
+                }
                 subScene.setFill(newValue.getBackgroundColor());
                 newValue.getOnLoad().accept(this);
             }

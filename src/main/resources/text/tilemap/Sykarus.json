@@ -1,0 +1,37 @@
+{
+  "path": "art/tileset/DionysiusDay.png",
+  "tiles": [
+    {
+      "startX": 448,
+      "startY": 0,
+      "endX": 511,
+      "endY": 63,
+      "positionX": 380,
+      "positionY": 20
+    },
+    {
+      "startX": 80,
+      "startY": 16,
+      "endX": 127,
+      "endY": 63,
+      "positionX": 50,
+      "positionY": 180
+    },
+    {
+      "startX": 193,
+      "startY": 80,
+      "endX": 271,
+      "endY": 127,
+      "positionX": 120,
+      "positionY": 210
+    },
+    {
+      "startX": 304,
+      "startY": 112,
+      "endX": 511,
+      "endY": 118,
+      "positionX": 0,
+      "positionY": 300
+    }
+  ]
+}

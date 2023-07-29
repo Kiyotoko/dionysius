@@ -1,5 +1,6 @@
 package org.dionysius.content;
 
+import java.io.File;
 import java.util.Set;
 
 import org.dionysius.game.Level;
@@ -10,19 +11,16 @@ import javafx.scene.paint.Color;
 
 public class Sykarus extends Level {
 
-	public static final Sykarus SYKARUS_DAY = new Sykarus(
-			new ImageExtractor(new Image("art/tileset/DionysiusDay.png").getPixelReader(), 3), Color.WHEAT);
-	public static final Sykarus SYKARUS_NIGHT = new Sykarus(
-			new ImageExtractor(new Image("art/tileset/DionysiusNight.png").getPixelReader(), 3), Color.gray(0.125));
+	private static final TileMapLoader tileMap = new TileMapLoader(new File("src/main/resources/text/tilemap/Sykarus.json"));
 
-	public Sykarus(ImageExtractor extractor, Color background) {
-		getTileSets().addAll(Set.of(//
-				create(extractor.extract(448, 0, 511, 63), 380, 20), //
-				create(extractor.extract(80, 16, 127, 63), 50, 180), //
-				create(extractor.extract(193, 80, 271, 127), 120, 210), //
-				create(extractor.extract(304, 112, 511, 118), 0, 300)//
-		));
-		setBackgroundColor(background);
+	public Sykarus() {
+		getTileMap().addAll(tileMap.getLoaded());
+		setOnLoad(game -> {
+			new DroidZapper(game);
+			new Merchant(game);
+			new ShieldDroid(game);
+			new Hero(game);
+		});
+		setBackgroundColor(Color.WHEAT);
 	}
-
 }
