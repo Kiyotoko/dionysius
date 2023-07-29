@@ -52,7 +52,7 @@ public class Hero extends Creature {
 		));
     }
 
-    public Hero(Game game) {
+    public Hero(@Nonnull Game game) {
         super(game, new Vector2D(100, 0));
         getHealth().setMax(60.0);
         getHealth().setValue(60.0);
@@ -80,13 +80,13 @@ public class Hero extends Creature {
         if (getGame().getDialog() != null) getGame().getDialog().next(this, 2);
     }
 
-    public void applyTo(Scene node) {
+    public void applyTo(@Nonnull Scene node) {
         node.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
 			Runnable action = keymap.get(e.getCode());
 			if (action != null) action.run();
         });
         node.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
-			if (hasHigherPriority(ANIMATION_RUN)) idle();
+			if (e.getCode() == KeyCode.A || e.getCode() == KeyCode.D) halt();
         });
         node.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
         });

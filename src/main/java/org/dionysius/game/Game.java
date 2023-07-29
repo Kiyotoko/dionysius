@@ -64,6 +64,7 @@ public class Game extends Scene {
                 content.setBackground(new Background(new BackgroundFill(newValue.getBackgroundColor(),
                         null, null)));
                 subScene.setFill(newValue.getBackgroundColor());
+                newValue.getOnLoad().accept(this);
             }
         });
         dialog.addListener((ObservableValue<? extends DialogBox> observableValue, @Nullable DialogBox oldValue,

@@ -9,13 +9,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 public class Level extends Pane {
 
-	public static final byte DAYTIME_MORNING = 0;
-	public static final byte DAYTIME_NOON = 1;
-	public static final byte DAYTIME_EVENING = 2;
-	public static final byte DAYTIME_NIGHT = 3;
+	public static final Consumer<Game> NONE = (Game game) -> {};
 
 	public static  ImageView create(Image image, Number posX, Number posY) {
 		ImageView view = new ImageView(image);
@@ -25,13 +23,15 @@ public class Level extends Pane {
 	}
 
 	@Nonnull
-	private final ObservableList<ImageView> graphics = FXCollections.observableArrayList();
+	private final ObservableList<ImageView> tileSets = FXCollections.observableArrayList();
+
+	private Consumer<Game> onLoad = NONE;
 
 	@Nonnull
 	private Color backgroundColor = Color.TRANSPARENT;
 
 	public Level() {
-		graphics.addListener((Change<? extends ImageView> change) -> {
+		tileSets.addListener((Change<? extends ImageView> change) -> {
 			change.next();
 			if (change.wasAdded())
 				for (int i = 0; i < change.getAddedSize(); i++)
@@ -44,8 +44,16 @@ public class Level extends Pane {
 	}
 
 	@Nonnull
-	public ObservableList<ImageView> getGraphics() {
-		return graphics;
+	public ObservableList<ImageView> getTileSets() {
+		return tileSets;
+	}
+
+	public Consumer<Game> getOnLoad() {
+		return onLoad;
+	}
+
+	public void setOnLoad(Consumer<Game> onLoad) {
+		this.onLoad = onLoad;
 	}
 
 	@Nonnull

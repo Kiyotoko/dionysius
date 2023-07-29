@@ -41,7 +41,7 @@ public class Creature implements Kinetic, Destroyable {
     private final @Nonnull List<Indicator> indicators = new ArrayList<>(
             List.of(health.asIndicator(), new Indicator.PositionIndicator(this)));
 
-    public Creature(Game game, @Nonnull Vector2D position) {
+    public Creature(@Nonnull Game game, @Nonnull Vector2D position) {
         this.game = game;
         this.position = position;
         game.getEntities().add(this);
@@ -49,6 +49,7 @@ public class Creature implements Kinetic, Destroyable {
         // reposition();
     }
 
+    @Nonnull
     public static Vector2D transform(double x, double y, double width, double height) {
         return new Vector2D(x - width * 0.5, 350.0 - y
                 - height
@@ -65,8 +66,7 @@ public class Creature implements Kinetic, Destroyable {
 
     @Override
     public void update(double deltaT) {
-        velocitate(deltaT);
-        displacement(deltaT);
+        Kinetic.super.update(deltaT);
         animate(deltaT);
     }
 
@@ -302,6 +302,10 @@ public class Creature implements Kinetic, Destroyable {
             if (getAnimations().containsKey(ANIMATION_RUN))
                 setAnimationPlayed(ANIMATION_RUN);
         }
+    }
+
+    public void halt()  {
+        setDestination(Vector2D.ZERO);
     }
 
     public void dash() {
