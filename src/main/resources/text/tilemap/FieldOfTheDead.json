@@ -1,0 +1,83 @@
+{
+  "path": "art/tileset/SykarusNight.png",
+  "tiles": [
+    {
+      "startX": 80,
+      "startY": 16,
+      "endX": 127,
+      "endY": 63,
+      "positionX": 50,
+      "positionY": 180
+    },
+    {
+      "startX": 193,
+      "startY": 80,
+      "endX": 271,
+      "endY": 127,
+      "positionX": -120,
+      "positionY": 210
+    },
+    {
+      "startX": 304,
+      "startY": 112,
+      "endX": 511,
+      "endY": 118,
+      "positionX": 0,
+      "positionY": 300
+    },
+    {
+      "startX": 130,
+      "startY": 149,
+      "endX": 160,
+      "endY": 175,
+      "positionX": 260,
+      "positionY": 240
+    },
+    {
+      "startX": 168,
+      "startY": 140,
+      "endX": 187,
+      "endY": 175,
+      "positionX": 300,
+      "positionY": 220
+    },
+    {
+      "startX": 401,
+      "startY": 224,
+      "endX": 431,
+      "endY": 240,
+      "positionX": 200,
+      "positionY": 40
+    },
+    {
+      "startX": 401,
+      "startY": 224,
+      "endX": 431,
+      "endY": 240,
+      "positionX": 400,
+      "positionY": 80
+    }
+  ],
+  "rescaledTiles": [
+    {
+      "startX": 16,
+      "startY": 160,
+      "endX": 32,
+      "endY": 176,
+      "positionX": -350,
+      "positionY": -250,
+      "scaleX": 30,
+      "scaleY": 12
+    },
+    {
+      "startX": 32,
+      "startY": 160,
+      "endX": 48,
+      "endY": 176,
+      "positionX": -350,
+      "positionY": 300,
+      "scaleX": 30,
+      "scaleY": 6
+    }
+  ]
+}

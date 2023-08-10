@@ -22,8 +22,7 @@ import javafx.util.Duration;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Game extends Scene {
 
@@ -38,6 +37,7 @@ public class Game extends Scene {
     private final @Nonnull ObjectProperty<Level> level = new SimpleObjectProperty<>();
     private final @Nonnull ObjectProperty<DialogBox> dialog = new SimpleObjectProperty<>();
 
+    private final @Nonnull List<Level> levels = new ArrayList<>();
     private final @Nonnull Camera focusCamera = new ParallelCamera();
 
     public Game(final @Nonnull Pane root, double width, double height) {
@@ -140,7 +140,20 @@ public class Game extends Scene {
         this.level.setValue(level);
     }
 
-	@Nullable
+    public void loadNextLevel() {
+        if (getLevels().isEmpty()) {
+            throw new RuntimeException("This game has no levels. Please add levels first.");
+        }
+        int index = getLevel() != null ? getLevels().indexOf(getLevel()) : 0;
+        setLevel(getLevels().get(index));
+    }
+
+    @Nonnull
+    public List<Level> getLevels() {
+        return levels;
+    }
+
+    @Nullable
     public DialogBox getDialog() {
         return this.dialog.getValue();
     }

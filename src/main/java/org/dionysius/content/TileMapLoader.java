@@ -28,7 +28,7 @@ public class TileMapLoader {
             this.positionY = positionY;
         }
 
-        private transient Image tile;
+        protected transient Image tile;
 
         public void load(ImageExtractor extractor) {
             tile = extractor.extract(startX, startY, endX, endY);
@@ -36,6 +36,22 @@ public class TileMapLoader {
 
         public Image getTile() {
             return tile;
+        }
+
+        public int getStartX() {
+            return startX;
+        }
+
+        public int getStartY() {
+            return startY;
+        }
+
+        public int getEndX() {
+            return endX;
+        }
+
+        public int getEndY() {
+            return endY;
         }
 
         public int getPositionX() {
@@ -47,10 +63,36 @@ public class TileMapLoader {
         }
     }
 
+    public static class RescaledTileSource extends TileSource {
+
+        private final int scaleX, scaleY;
+
+        public RescaledTileSource(int startX, int startY, int endX, int endY, int positionX, int positionY, int scaleX, int scaleY) {
+            super(startX, startY, endX, endY, positionX, positionY);
+            this.scaleX = scaleX;
+            this.scaleY = scaleY;
+        }
+
+        @Override
+        public void load(ImageExtractor extractor) {
+            tile = extractor.extract(getStartX(), getStartY(), getEndX(), getEndY(), getScaleX(), getScaleY());
+        }
+
+        public int getScaleX() {
+            return scaleX;
+        }
+
+        public int getScaleY() {
+            return scaleY;
+        }
+    }
+
     public static class BundleSource implements Serializable {
         public final String path;
 
         private final List<TileSource> tiles = new ArrayList<>();
+
+        private final List<RescaledTileSource> rescaledTiles = new ArrayList<>();
 
         public BundleSource(String path, TileSource... tiles) {
             this.path = path;
@@ -61,7 +103,14 @@ public class TileMapLoader {
             return tiles;
         }
 
+        public List<RescaledTileSource> getRescaledTiles() {
+            return rescaledTiles;
+        }
+
         public void preload() {
+            for (TileSource tile : rescaledTiles) {
+                tile.load(getExtractor());
+            }
             for (TileSource tile : tiles) {
                 tile.load(getExtractor());
             }
@@ -86,7 +135,6 @@ public class TileMapLoader {
             Objects.requireNonNull(bundle);
             loaded.addAll(buildBundle(bundle));
         } catch (IOException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -98,6 +146,9 @@ public class TileMapLoader {
     private static List<Level.Tile> buildBundle(BundleSource source) {
         List<Level.Tile> build = new ArrayList<>();
         source.preload();
+        for (RescaledTileSource entry : source.getRescaledTiles()){
+            build.add(buildTile(entry));
+        }
         for (TileSource entry : source.getTiles()) {
             build.add(buildTile(entry));
         }

@@ -19,6 +19,24 @@ public class ImageExtractor {
 	}
 
 	@Nonnull
+	public static Image extract(@Nonnull PixelReader reader, final int stX, final int stY, final int endX, final int endY) {
+		int width = (endX - stX);
+		int height = (endY - stY);
+
+		WritableImage extracted = new WritableImage(width, height);
+		PixelWriter writer = extracted.getPixelWriter();
+
+		for (int y = stY; y < endY; y++) {
+			for (int x = stX; x < endX; x++) {
+				int argb = reader.getArgb(x, y);
+				writer.setArgb((x - stX), (y - stY), argb);
+			}
+		}
+
+		return extracted;
+	}
+
+	@Nonnull
 	public Image extract(final int stX, final int stY, final int endX, final int endY) {
 		int width = (endX - stX) * scale;
 		int height = (endY - stY) * scale;
@@ -32,6 +50,31 @@ public class ImageExtractor {
 				for (int wy = 0; wy < scale; wy++) {
 					for (int wx = 0; wx < scale; wx++) {
 						writer.setArgb((x - stX) * scale + wx, (y - stY) * scale + wy, argb);
+					}
+				}
+			}
+		}
+
+		return extracted;
+	}
+
+	@Nonnull
+	public Image extract(final int stX, final int stY, final int endX, final int endY, final int scaleX, final int scaleY) {
+		int realScaleX = scale * scaleX;
+		int realScaleY = scale * scaleY;
+
+		int width = (endX - stX) * realScaleX;
+		int height = (endY - stY) * realScaleY;
+
+		WritableImage extracted = new WritableImage(width, height);
+		PixelWriter writer = extracted.getPixelWriter();
+
+		for (int y = stY; y < endY; y++) {
+			for (int x = stX; x < endX; x++) {
+				int argb = reader.getArgb(x, y);
+				for (int wy = 0; wy < realScaleY; wy++) {
+					for (int wx = 0; wx < realScaleX; wx++) {
+						writer.setArgb((x - stX) * realScaleX + wx, (y - stY) * realScaleY + wy, argb);
 					}
 				}
 			}
