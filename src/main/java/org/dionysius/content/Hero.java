@@ -93,6 +93,12 @@ public class Hero extends Creature {
     }
 
     @Override
+    public void destroy() {
+        super.destroy();
+        System.out.println("hero destroy");
+    }
+
+    @Override
     public void setPosition(@Nonnull Vector2D position) {
         super.setPosition(position);
 

@@ -11,8 +11,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ShieldDroid extends Enemy {
-    public ShieldDroid(@Nonnull Game game) {
-        super(game, new Vector2D(300.0, 0.0));
+    public ShieldDroid(@Nonnull Game game, Vector2D position) {
+        super(game, position);
         getPattern().addAll(List.of(this::attack1, this::walk, this::attack1));
         getHitbox().setHeight(31);
         getHitbox().setWidth(28);

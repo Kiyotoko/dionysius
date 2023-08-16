@@ -46,7 +46,6 @@ public class Creature implements Kinetic, Destroyable {
         this.position = position;
         game.getEntities().add(this);
         game.getCreatures().add(this);
-        // reposition();
     }
 
     @Nonnull

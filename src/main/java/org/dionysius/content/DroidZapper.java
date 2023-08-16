@@ -9,8 +9,8 @@ import javafx.scene.image.Image;
 
 public class DroidZapper extends Enemy {
 
-	public DroidZapper(Game game) {
-		super(game, new Vector2D(300, 0));
+	public DroidZapper(Game game, Vector2D position) {
+		super(game, position);
 		getPattern().addAll(List.of(this::attack1, this::walk, this::turn));
 		getHitbox().setWidth(35);
 		getHitbox().setHeight(41);

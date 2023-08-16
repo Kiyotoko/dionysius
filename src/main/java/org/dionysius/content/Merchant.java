@@ -10,6 +10,12 @@ public class Merchant extends Creature implements Interactable {
 
     private static final AnimationLoader animation = new AnimationLoader(new File("src/main/resources/text/animation/Merchant.json"));
     private static final DialogLoader dialog = new DialogLoader(new File("src/main/resources/text/dialog/Merchant.json"));
+    static {
+        dialog.getLoaded().get(5).setOnStart((dialog, hero) -> {
+            hero.getGame().loadNextLevel();
+            System.out.println("Called");
+        });
+    }
 
     private final DialogBox box = new DialogBox();
     {

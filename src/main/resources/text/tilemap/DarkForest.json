@@ -2,14 +2,6 @@
   "path": "art/tileset/SykarusNight.png",
   "tiles": [
     {
-      "startX": 448,
-      "startY": 0,
-      "endX": 511,
-      "endY": 63,
-      "positionX": 380,
-      "positionY": 20
-    },
-    {
       "startX": 80,
       "startY": 16,
       "endX": 127,
@@ -32,9 +24,36 @@
       "endY": 118,
       "positionX": 0,
       "positionY": 300
+    },
+    {
+      "startX": 16,
+      "startY": 112,
+      "endX": 64,
+      "endY": 128,
+      "positionX": 380,
+      "positionY": 280
     }
   ],
   "rescaledTiles": [
-
+    {
+      "startX": 32,
+      "startY": 160,
+      "endX": 48,
+      "endY": 176,
+      "positionX": -350,
+      "positionY": -250,
+      "scaleX": 30,
+      "scaleY": 12
+    },
+    {
+      "startX": 16,
+      "startY": 160,
+      "endX": 32,
+      "endY": 176,
+      "positionX": -350,
+      "positionY": 300,
+      "scaleX": 30,
+      "scaleY": 6
+    }
   ]
 }

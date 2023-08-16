@@ -1,5 +1,6 @@
 package org.dionysius.game;
 
+import io.scvis.entity.Destroyable;
 import io.scvis.entity.Entity;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -144,7 +145,23 @@ public class Game extends Scene {
         if (getLevels().isEmpty()) {
             throw new RuntimeException("This game has no levels. Please add levels first.");
         }
-        int index = getLevel() != null ? getLevels().indexOf(getLevel()) : 0;
+
+        for (int i = 0; i < entities.size();) {
+            Entity next = entities.get(i);
+            if (next instanceof Destroyable) {
+                int last = entities.size();
+                ((Destroyable) next).destroy();
+                assert entities.size() < last;
+            } else {
+                i++;
+            }
+        }
+
+        int index = getLevel() != null ? getLevels().indexOf(getLevel()) + 1 : 0;
+        if (getLevels().size() <= index) {
+            throw new RuntimeException("No levels are left.");
+        }
+        System.out.println("Load next level ...");
         setLevel(getLevels().get(index));
     }
 

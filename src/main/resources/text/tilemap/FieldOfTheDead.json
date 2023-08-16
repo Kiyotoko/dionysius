@@ -1,5 +1,5 @@
 {
-  "path": "art/tileset/SykarusNight.png",
+  "path": "art/tileset/SykarusDay.png",
   "tiles": [
     {
       "startX": 80,
@@ -8,14 +8,6 @@
       "endY": 63,
       "positionX": 50,
       "positionY": 180
-    },
-    {
-      "startX": 193,
-      "startY": 80,
-      "endX": 271,
-      "endY": 127,
-      "positionX": -120,
-      "positionY": 210
     },
     {
       "startX": 304,
@@ -60,20 +52,20 @@
   ],
   "rescaledTiles": [
     {
-      "startX": 16,
-      "startY": 160,
-      "endX": 32,
-      "endY": 176,
+      "startX": 32,
+      "startY": 176,
+      "endX": 48,
+      "endY": 192,
       "positionX": -350,
       "positionY": -250,
       "scaleX": 30,
       "scaleY": 12
     },
     {
-      "startX": 32,
-      "startY": 160,
-      "endX": 48,
-      "endY": 176,
+      "startX": 16,
+      "startY": 176,
+      "endX": 32,
+      "endY": 192,
       "positionX": -350,
       "positionY": 300,
       "scaleX": 30,

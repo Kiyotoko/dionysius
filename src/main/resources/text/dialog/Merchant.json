@@ -3,32 +3,37 @@
     {
       "text": "Welcome in Sykarus, traveler!",
       "preview": "Don't need more to know.",
-      "connections": [1, 2, 3]
+      "connections": [1, 2, 6]
     },
     {
-      "text": "A old city, a old war ... Is there more to know?",
+      "text": "It's the field of the dead. Long time ago, Dionysius fought here against his own people. The graves are the only things left from them.",
       "preview": "What happened here?",
+      "connections": [0]
+    },
+    {
+      "text": "You want to disappear already? That's not exactly easy. If it were easy, I would have done it myself long ago.",
+      "preview": "How can I left this lonely place?",
+      "connections": [3]
+    },
+    {
+      "text": "Simply put, all you have to do is cross the dark forest and enter Sycarus.",
+      "preview": "Tell me how.",
       "connections": [4, 5]
     },
     {
-      "text": "The ruins of the dead.",
-      "preview": "What are the buildings?",
-      "connections": [0]
+      "text": "Simple? Far from it! For in Sycarus live creatures far more powerful than you could ever imagine.",
+      "preview": "Seems easy.",
+      "connections": [5]
+    },
+    {
+      "text": "",
+      "preview": "Ok, I will do it!",
+      "connections": []
     },
     {
       "text": "",
       "preview": "End",
       "connections": []
-    },
-    {
-      "text": "Dionysius, Lord of the fallen, conquered Sykarus in his last war. Since then, Sykarus is a city of blood and death.",
-      "preview": "Yes!",
-      "connections": [0]
-    },
-    {
-      "text": "Then you guess right.",
-      "preview": "I guess no ...",
-      "connections": [0]
     }
   ]
 }
