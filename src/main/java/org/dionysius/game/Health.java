@@ -11,13 +11,9 @@ import javafx.scene.paint.Color;
 
 public class Health {
 
-	@Nonnull
-	private final Creature creature;
-
-	@Nonnull
-	private final DoubleProperty val;
-	@Nonnull
-	private final DoubleProperty max;
+	private final @Nonnull Creature creature;
+	private final @Nonnull DoubleProperty val;
+	private final @Nonnull DoubleProperty max;
 
 	public Health(@Nonnull Creature creature, double max) {
 
@@ -36,21 +32,13 @@ public class Health {
 		return creature;
 	}
 
-	private static double capp(double min, double max, double value) {
-		if (value < min)
-			return min;
-		if (value > max)
-			return max;
-		return value;
-	}
-
 	@Nonnull
 	public DoubleProperty valueProperty() {
 		return val;
 	}
 
 	public void setValue(@Nullable Double value) {
-		val.set(capp(0.0, max.get(), value == null ? 0.0 : value));
+		val.set(Math.max(0.0, Math.min(max.get(), value == null ? 0.0 : value)));
 	}
 
 	public double getValue() {

@@ -12,17 +12,19 @@ import java.util.*;
 public class DialogLoader {
 
     public static class DialogSource implements Serializable {
-        private final List<Integer> connections = new ArrayList<>();
+        private final List<String> connections = new ArrayList<>();
         private final String text;
         private final String preview;
+        private final String key;
 
-        public DialogSource(String text, String preview, Integer... connections) {
+        public DialogSource(String text, String preview, String key, String... connections) {
             this.text = text;
             this.preview = preview;
+            this.key = key;
             getConnections().addAll(List.of(connections));
         }
 
-        public List<Integer> getConnections() {
+        public List<String> getConnections() {
             return connections;
         }
 
@@ -33,6 +35,10 @@ public class DialogLoader {
         public String getPreview() {
             return preview;
         }
+
+        public String getKey() {
+            return key;
+        }
     }
 
     public static class BundleSource implements Serializable {
@@ -42,22 +48,22 @@ public class DialogLoader {
             this.dialogs.addAll(dialogs);
         }
 
-        public ArrayList<DialogSource> getDialogs() {
+        public List<DialogSource> getDialogs() {
             return dialogs;
         }
     }
 
     private static final Gson gson = new Gson();
 
-    private final List<DialogBox.Dialog> loaded = new ArrayList<>();
+    private final Map<String, DialogBox.Dialog> loaded = new HashMap<>();
 
     public DialogLoader(File file) {
         try (FileReader reader = new FileReader(file)) {
             DialogLoader.BundleSource bundle = gson.fromJson(reader, DialogLoader.BundleSource.class);
             Objects.requireNonNull(bundle);
-            loaded.addAll(buildBundle(bundle));
+            loaded.putAll(buildBundle(bundle));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new InternalError(e);
         }
     }
 
@@ -65,15 +71,15 @@ public class DialogLoader {
         return new DialogBox.Dialog(source.getText(), source.getPreview(), source.getConnections());
     }
 
-    private static List<DialogBox.Dialog> buildBundle(DialogLoader.BundleSource source) {
-        List<DialogBox.Dialog> build = new ArrayList<>();
+    private static Map<String, DialogBox.Dialog> buildBundle(DialogLoader.BundleSource source) {
+        Map<String, DialogBox.Dialog> build = new HashMap<>();
         for (DialogSource entry : source.getDialogs()) {
-            build.add(buildDialog(entry));
+            build.put(entry.getKey(), buildDialog(entry));
         }
         return build;
     }
 
-    public List<DialogBox.Dialog> getLoaded() {
+    public Map<String, DialogBox.Dialog> getLoaded() {
         return loaded;
     }
 }

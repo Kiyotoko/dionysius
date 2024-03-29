@@ -2,72 +2,51 @@ package org.dionysius.game;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import org.dionysius.content.Hero;
 
 import javax.annotation.Nonnull;
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-public class DialogBox extends Pane {
+public class DialogBox extends VBox {
 
-    public static class Dialog {
+    public static class Dialog implements Serializable {
 
-        public static final @Nonnull BiConsumer<Dialog, Hero> NONE = (d, h) -> { };
+        private transient @Nonnull BiConsumer<Dialog, Hero> onAction = (d, h) -> { };
 
-        private @Nonnull BiConsumer<Dialog, Hero> onStart = NONE;
-        private @Nonnull BiConsumer<Dialog, Hero> onFinish = NONE;
+        private final @Nonnull String text;
 
-        private @Nonnull String text;
+        private final @Nonnull String preview;
 
-        private @Nonnull String preview;
+        private final @Nonnull List<String> connections = new ArrayList<>();
 
-        private final @Nonnull List<Integer> connections = new ArrayList<>();
-
-        public Dialog(@Nonnull String text, @Nonnull String preview, Collection<Integer> connections) {
+        public Dialog(@Nonnull String text, @Nonnull String preview, Collection<String> connections) {
             this.text = text;
             this.preview = preview;
             getConnections().addAll(connections);
         }
 
-        public void setOnStart(@Nonnull BiConsumer<Dialog, Hero> onStart) {
-            this.onStart = onStart;
+        public void setOnAction(@Nonnull BiConsumer<Dialog, Hero> onAction) {
+            this.onAction = onAction;
         }
 
         @Nonnull
-        public BiConsumer<Dialog, Hero> getOnStart() {
-            return onStart;
-        }
-
-        public void setOnFinish(@Nonnull BiConsumer<Dialog, Hero> onFinish) {
-            this.onFinish = onFinish;
+        public BiConsumer<Dialog, Hero> getOnAction() {
+            return onAction;
         }
 
         @Nonnull
-        public BiConsumer<Dialog, Hero> getOnFinish() {
-            return onFinish;
-        }
-
-        @Nonnull
-        public List<Integer> getConnections() {
+        public List<String> getConnections() {
             return connections;
-        }
-
-        public void setText(@Nonnull String text) {
-            this.text = text;
         }
 
         @Nonnull
         public String getText() {
             return text;
-        }
-
-        public void setPreview(@Nonnull String preview) {
-            this.preview = preview;
         }
 
         @Nonnull
@@ -76,59 +55,65 @@ public class DialogBox extends Pane {
         }
     }
 
-    public final @Nonnull Vector<Dialog> dialog = new Vector<>();
+    public final @Nonnull Map<String, Dialog> dialog = new HashMap<>();
 
     private final @Nonnull Label text = new Label("[ TEXT IS MISSING ]");
-    {
+
+    private final @Nonnull List<Label> options = new ArrayList<>();
+
+    public DialogBox() {
+        setBackground(new Background(new BackgroundFill(Color.gray(0.1, 0.6), CornerRadii.EMPTY,
+                new Insets(40))));
+
         text.setWrapText(true);
         text.setMnemonicParsing(true);
         text.setMaxWidth(300);
-    }
+        text.setFont(Font.font(14));
 
-    public DialogBox() {
-        setBackground(new Background(new BackgroundFill(Color.gray(0.1, 0.6), CornerRadii.EMPTY, new Insets(40))));
+        for (int i = 0; i < 3; i++) {
+            Label build = new Label();
+            Label graphic = new Label("" + (i+1));
+            graphic.setFont(Font.font(14));
+            build.setGraphic(graphic);
+            build.setFont(Font.font(12));
+            options.add(build);
+        }
         getChildren().add(text);
+        getChildren().addAll(options);
     }
 
-    int element;
+    private String element;
 
     public void show() {
-        element = 0;
+        element = "0";
         Dialog curr = getCurrent();
-        text.setText(getScript(curr));
+        text.setText(curr.getText());
+        for (int i = 0; i < 3; i++) {
+            if (i < curr.getConnections().size()) {
+                options.get(i).setText(dialog.get(curr.getConnections().get(i)).getPreview());
+                options.get(i).setVisible(true);
+            } else options.get(i).setVisible(false);
+        }
     }
 
     public void start(Hero hero) {
         Dialog curr = getCurrent();
-        curr.getOnStart().accept(curr, hero);
-        text.setText(getScript(curr));
+        curr.getOnAction().accept(curr, hero);
+        text.setText(curr.getText());
+        for (int i = 0; i < 3; i++) {
+            if (i < curr.getConnections().size()) {
+                options.get(i).setText(dialog.get(curr.getConnections().get(i)).getPreview());
+                options.get(i).setVisible(true);
+            } else options.get(i).setVisible(false);
+        }
     }
 
     public void next(Hero hero, int index) {
         Dialog curr = getCurrent();
         if (index < curr.getConnections().size()) {
-            finish(hero);
             element = curr.getConnections().get(index);
             start(hero);
         }
-    }
-
-
-    @Nonnull
-    public String getScript(Dialog dialog) {
-        return dialog.getText() + getPreviews(dialog);
-    }
-
-    @Nonnull
-    public String getPreviews(Dialog dialog) {
-        final @Nonnull StringBuilder build = new StringBuilder();
-        for (int index = 0; index < dialog.getConnections().size(); index++)
-            build.append("\n").append(index+1).append("\t").append(getDialogs().get(dialog.getConnections().get(index)).getPreview());
-        return build.toString();
-    }
-
-    public void finish(Hero hero) {
-        getCurrent().getOnFinish().accept(getCurrent(), hero);
     }
 
     public Dialog getCurrent() {
@@ -136,12 +121,7 @@ public class DialogBox extends Pane {
     }
 
     @Nonnull
-    public Vector<Dialog> getDialogs() {
+    public Map<String, Dialog> getDialogs() {
         return dialog;
-    }
-
-    @Nonnull
-    public Label getText() {
-        return text;
     }
 }

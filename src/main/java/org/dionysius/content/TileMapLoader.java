@@ -3,7 +3,7 @@ package org.dionysius.content;
 import com.google.gson.Gson;
 import javafx.scene.image.Image;
 import org.dionysius.game.ImageExtractor;
-import org.dionysius.game.Level;
+import org.dionysius.game.Tile;
 
 import java.io.File;
 import java.io.FileReader;
@@ -127,7 +127,7 @@ public class TileMapLoader {
 
     private static final Gson gson = new Gson();
 
-    private final List<Level.Tile> loaded = new ArrayList<>();
+    private final List<Tile> loaded = new ArrayList<>();
 
     public TileMapLoader(File file) {
         try (FileReader reader = new FileReader(file)) {
@@ -139,12 +139,12 @@ public class TileMapLoader {
         }
     }
 
-    private static Level.Tile buildTile(TileSource source) {
-        return new Level.Tile(source.getTile(), source.getPositionX(), source.getPositionY());
+    private static Tile buildTile(TileSource source) {
+        return new Tile(source.getTile(), source.getPositionX(), source.getPositionY());
     }
 
-    private static List<Level.Tile> buildBundle(BundleSource source) {
-        List<Level.Tile> build = new ArrayList<>();
+    private static List<Tile> buildBundle(BundleSource source) {
+        List<Tile> build = new ArrayList<>();
         source.preload();
         for (RescaledTileSource entry : source.getRescaledTiles()){
             build.add(buildTile(entry));
@@ -155,7 +155,7 @@ public class TileMapLoader {
         return build;
     }
 
-    public List<Level.Tile> getLoaded() {
+    public List<Tile> getLoaded() {
         return loaded;
     }
 }

@@ -1,9 +1,6 @@
 package org.dionysius.game;
 
-import io.scvis.entity.Destroyable;
-import io.scvis.entity.Entity;
-import io.scvis.entity.Kinetic;
-import io.scvis.geometry.Vector2D;
+import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -15,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class Creature implements Kinetic, Destroyable {
+public class Creature implements Kinetic, Entity, Destroyable {
 
     public static final byte DIRECTION_LEFT = -1;
     public static final byte DIRECTION_RIGHT = 1;
@@ -35,13 +32,13 @@ public class Creature implements Kinetic, Destroyable {
 
     private final @Nonnull Game game;
     private final @Nonnull Health health = new Health(this, 20.0);
-    private final @Nonnull Hitbox hitbox = new Hitbox(this, 20, 20);
+    private final @Nonnull HitBox hitbox = new HitBox(this, 20, 20);
     private final @Nonnull ImageView view = new ImageView();
     private final @Nonnull Pane pane = new Pane(view);
     private final @Nonnull List<Indicator> indicators = new ArrayList<>(
             List.of(health.asIndicator(), new Indicator.PositionIndicator(this)));
 
-    public Creature(@Nonnull Game game, @Nonnull Vector2D position) {
+    public Creature(@Nonnull Game game, @Nonnull Point2D position) {
         this.game = game;
         this.position = position;
         game.getEntities().add(this);
@@ -49,8 +46,8 @@ public class Creature implements Kinetic, Destroyable {
     }
 
     @Nonnull
-    public static Vector2D transform(double x, double y, double width, double height) {
-        return new Vector2D(x - width * 0.5, 350.0 - y
+    public static Point2D transform(double x, double y, double width, double height) {
+        return new Point2D(x - width * 0.5, 350.0 - y
                 - height
         );
     }
@@ -58,15 +55,12 @@ public class Creature implements Kinetic, Destroyable {
     private static double clamp(double min, double max, double value) {
         if (value < min)
             return min;
-        if (value > max)
-            return max;
-        return value;
+        return Math.min(value, max);
     }
 
     @Override
-    public void update(double deltaT) {
-        Kinetic.super.update(deltaT);
-        animate(deltaT);
+    public void update() {
+        animate();
     }
 
     @Override
@@ -101,18 +95,14 @@ public class Creature implements Kinetic, Destroyable {
     }
 
     @Override
-    public void accelerate(double deltaT) {
+    public void velocity() {
+        setVelocity(new Point2D(clamp(-35, 35, getVelocity().getX() + getVelocity().getX()),
+                clamp(-35, 35, getVelocity().getY() + getDestination().getY() - 1)));
     }
 
     @Override
-    public void velocitate(double deltaT) {
-        setVelocity(new Vector2D(clamp(-35, 35, getVelocity().getX() + getVelocity().getX()),
-                clamp(-35, 35, getVelocity().getY() + getDestination().getY() - deltaT)));
-    }
-
-    @Override
-    public void displacement(double deltaT) {
-        setPosition(new Vector2D(clamp(0, 600, getPosition().getX() + getDestination().getX()),
+    public void displacement() {
+        setPosition(new Point2D(clamp(0, 600, getPosition().getX() + getDestination().getX()),
                 clamp(0, 250, getPosition().getY() + getVelocity().getY())));
     }
 
@@ -126,8 +116,8 @@ public class Creature implements Kinetic, Destroyable {
     private int animationCount = -1;
     private double animationTime = 0;
 
-    public void animate(double deltaT) {
-        animationTime += deltaT;
+    public void animate() {
+        animationTime += 1;
         if (animationTime > getAnimationDuration()) {
             rotate();
             animationTime = 0;
@@ -144,25 +134,25 @@ public class Creature implements Kinetic, Destroyable {
         }
     }
 
-    private @Nonnull Vector2D velocity = Vector2D.ZERO;
-    private @Nonnull Vector2D position;
-    private @Nonnull Vector2D destination = Vector2D.ZERO;
+    private @Nonnull Point2D velocity = Point2D.ZERO;
+    private @Nonnull Point2D position;
+    private @Nonnull Point2D destination = Point2D.ZERO;
 
     @Nonnull
-    public Vector2D getVelocity() {
+    public Point2D getVelocity() {
         return velocity;
     }
 
-    public void setVelocity(@Nonnull Vector2D velocity) {
+    public void setVelocity(@Nonnull Point2D velocity) {
         this.velocity = velocity;
     }
 
     @Nonnull
-    public Vector2D getPosition() {
+    public Point2D getPosition() {
         return position;
     }
 
-    public void setPosition(@Nonnull Vector2D position) {
+    public void setPosition(@Nonnull Point2D position) {
        if (!position.equals(getPosition())) {
             this.position = position;
             reposition();
@@ -170,7 +160,7 @@ public class Creature implements Kinetic, Destroyable {
     }
 
     public void reposition() {
-        Vector2D transformed = transform(position.getX(), position.getY(), pane.getWidth(), pane.getHeight());
+        Point2D transformed = transform(position.getX(), position.getY(), pane.getWidth(), pane.getHeight());
         pane.setLayoutX(transformed.getX());
         pane.setLayoutY(transformed.getY());
         for (Indicator indicator : getIndicators()) {
@@ -179,22 +169,17 @@ public class Creature implements Kinetic, Destroyable {
     }
 
     @Nonnull
-    public Vector2D getDestination() {
+    public Point2D getDestination() {
         return destination;
     }
 
-    public void setDestination(@Nonnull Vector2D destination) {
+    public void setDestination(@Nonnull Point2D destination) {
         this.destination = destination;
     }
 
     @Nonnull
     public Game getGame() {
         return game;
-    }
-
-    @Nonnull
-    public ImageView getView() {
-        return view;
     }
 
     @Nonnull
@@ -283,13 +268,13 @@ public class Creature implements Kinetic, Destroyable {
     }
 
     public void idle() {
-        setDestination(Vector2D.ZERO);
+        setDestination(Point2D.ZERO);
         setAnimationPlayed(ANIMATION_IDLE);
     }
 
     public void walk() {
         if (hasHigherPriority(ANIMATION_WALK)) {
-            setDestination(new Vector2D(getDirection(), 0));
+            setDestination(new Point2D(getDirection(), 0));
             if (getAnimations().containsKey(ANIMATION_WALK))
                 setAnimationPlayed(ANIMATION_WALK);
         }
@@ -297,14 +282,14 @@ public class Creature implements Kinetic, Destroyable {
 
     public void run() {
         if (hasHigherPriority(ANIMATION_RUN)) {
-            setDestination(new Vector2D(2.0 * getDirection(), 0));
+            setDestination(new Point2D(2.0 * getDirection(), 0));
             if (getAnimations().containsKey(ANIMATION_RUN))
                 setAnimationPlayed(ANIMATION_RUN);
         }
     }
 
     public void halt()  {
-        setDestination(Vector2D.ZERO);
+        setDestination(Point2D.ZERO);
     }
 
     public void dash() {
@@ -317,43 +302,39 @@ public class Creature implements Kinetic, Destroyable {
 
     public void jump() {
         if (hasHigherPriority(ANIMATION_JUMP)) {
-            setVelocity(new Vector2D(0, 20));
+            setVelocity(new Point2D(0, 20));
             if (getAnimations().containsKey(ANIMATION_JUMP))
                 setAnimationPlayed(ANIMATION_JUMP);
         }
     }
 
     public void attack1() {
-        if (hasHigherPriority(ANIMATION_ATTACK_1)) {
-            if (getAnimations().containsKey(ANIMATION_ATTACK_1))
-                setAnimationPlayed(ANIMATION_ATTACK_1);
+        if (hasHigherPriority(ANIMATION_ATTACK_1) && (getAnimations().containsKey(ANIMATION_ATTACK_1)))
+                {setAnimationPlayed(ANIMATION_ATTACK_1);
         }
     }
 
     public void attack2() {
-        if (hasHigherPriority(ANIMATION_ATTACK_2)) {
-            if (getAnimations().containsKey(ANIMATION_ATTACK_2))
-                setAnimationPlayed(ANIMATION_ATTACK_2);
+        if (hasHigherPriority(ANIMATION_ATTACK_2) && (getAnimations().containsKey(ANIMATION_ATTACK_2)))
+                {setAnimationPlayed(ANIMATION_ATTACK_2);
         }
     }
 
     public void attack3() {
-        if (hasHigherPriority(ANIMATION_ATTACK_3)) {
-            if (getAnimations().containsKey(ANIMATION_ATTACK_3))
-                setAnimationPlayed(ANIMATION_ATTACK_3);
+        if (hasHigherPriority(ANIMATION_ATTACK_3) && (getAnimations().containsKey(ANIMATION_ATTACK_3)))
+                {setAnimationPlayed(ANIMATION_ATTACK_3);
         }
     }
 
     public void block() {
-        if (hasHigherPriority(ANIMATION_BLOCK)) {
-            if (getAnimations().containsKey(ANIMATION_BLOCK))
-                setAnimationPlayed(ANIMATION_BLOCK);
+        if (hasHigherPriority(ANIMATION_BLOCK) && (getAnimations().containsKey(ANIMATION_BLOCK)))
+                {setAnimationPlayed(ANIMATION_BLOCK);
         }
     }
 
     public void roll() {
         if (hasHigherPriority(ANIMATION_ROLL)) {
-            setDestination(new Vector2D(.5 * getDirection(), 0));
+            setDestination(new Point2D(.5 * getDirection(), 0));
             if (getAnimations().containsKey(ANIMATION_ROLL))
                 setAnimationPlayed(ANIMATION_BLOCK);
         }
@@ -361,7 +342,7 @@ public class Creature implements Kinetic, Destroyable {
 
     public void evade() {
         if (hasHigherPriority(ANIMATION_EVADE)) {
-            setDestination(new Vector2D(-3 * getDirection(), 0));
+            setDestination(new Point2D(-3. * getDirection(), 0));
             if (getAnimations().containsKey(ANIMATION_EVADE))
                 setAnimationPlayed(ANIMATION_EVADE);
         }
@@ -406,7 +387,7 @@ public class Creature implements Kinetic, Destroyable {
     }
 
     @Nonnull
-    public Hitbox getHitbox() {
+    public HitBox getHitbox() {
         return hitbox;
     }
 

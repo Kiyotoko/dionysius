@@ -1,37 +1,36 @@
 package org.dionysius.game;
 
-import io.scvis.entity.Destroyable;
-import io.scvis.entity.Entity;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
+import java.util.*;
+
+import javafx.animation.Animation;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener.Change;
-import javafx.collections.ObservableList;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Camera;
 import javafx.scene.ParallelCamera;
 import javafx.scene.Scene;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.SubScene;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
 
 public class Game extends Scene {
 
     private final @Nonnull List<Entity> entities = new ArrayList<>();
 
     private final @Nonnull Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10.0), e -> {
-        for (int index = 0; index < entities.size(); index++)
-            entities.get(index).update(1.0);
+        for (var entity : List.copyOf(entities))
+            entity.update();
     }));
 
     private final @Nonnull ObservableList<Creature> creatures = FXCollections.observableArrayList();
@@ -62,12 +61,12 @@ public class Game extends Scene {
         level.addListener((ObservableValue<? extends Level> observableValue, @Nullable Level oldValue,
                            @Nullable Level newValue) -> {
             if (oldValue != null) {
-                for (Level.Tile tile : oldValue.getTileMap()) {
+                for (Tile tile : oldValue.getTileMap()) {
                     background.getChildren().remove(tile.getView());
                 }
             }
             if (newValue != null) {
-                for (Level.Tile tile : newValue.getTileMap()) {
+                for (Tile tile : newValue.getTileMap()) {
                     background.getChildren().add(tile.getView());
                 }
                 subScene.setFill(newValue.getBackgroundColor());
@@ -83,7 +82,7 @@ public class Game extends Scene {
                 overlay.getChildren().add(newValue);
             }
         });
-        creatures.addListener((Change<? extends Creature> change) -> {
+        creatures.addListener((ListChangeListener.Change<? extends Creature> change) -> {
             change.next();
             if (change.wasAdded()) {
                 for (Creature creature : change.getAddedSubList()) {
@@ -111,20 +110,14 @@ public class Game extends Scene {
                     }
                 }
             }
-            System.out.println(change);
         });
-        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
 
 	@Nonnull
     public List<Entity> getEntities() {
         return entities;
-    }
-
-	@Nonnull
-    public Timeline getTimeline() {
-        return timeline;
     }
 
 	@Nonnull
@@ -143,25 +136,19 @@ public class Game extends Scene {
 
     public void loadNextLevel() {
         if (getLevels().isEmpty()) {
-            throw new RuntimeException("This game has no levels. Please add levels first.");
+            throw new InternalError("game has no levels. Please add levels first.");
         }
 
-        for (int i = 0; i < entities.size();) {
-            Entity next = entities.get(i);
-            if (next instanceof Destroyable) {
-                int last = entities.size();
-                ((Destroyable) next).destroy();
-                assert entities.size() < last;
-            } else {
-                i++;
+        for (var entity : entities) {
+            if (entity instanceof Destroyable) {
+                ((Destroyable) entity).destroy();
             }
         }
 
         int index = getLevel() != null ? getLevels().indexOf(getLevel()) + 1 : 0;
         if (getLevels().size() <= index) {
-            throw new RuntimeException("No levels are left.");
+            throw new InternalError("No levels are left.");
         }
-        System.out.println("Load next level ...");
         setLevel(getLevels().get(index));
     }
 

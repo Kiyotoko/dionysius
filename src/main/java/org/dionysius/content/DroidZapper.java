@@ -2,14 +2,14 @@ package org.dionysius.content;
 
 import java.util.List;
 
+import javafx.geometry.Point2D;
 import org.dionysius.game.*;
 
-import io.scvis.geometry.Vector2D;
 import javafx.scene.image.Image;
 
 public class DroidZapper extends Enemy {
 
-	public DroidZapper(Game game, Vector2D position) {
+	public DroidZapper(Game game, Point2D position) {
 		super(game, position);
 		getPattern().addAll(List.of(this::attack1, this::walk, this::turn));
 		getHitbox().setWidth(35);

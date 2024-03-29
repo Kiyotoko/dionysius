@@ -1,7 +1,9 @@
 package org.dionysius;
 
+import javafx.application.Application;
+
 public class Launcher {
 	public static void main(String[] args) {
-		App.launch(App.class, args);
+		Application.launch(App.class, args);
 	}
 }

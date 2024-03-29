@@ -1,8 +1,7 @@
 package org.dionysius.game;
 
 import java.util.function.Consumer;
-
-import io.scvis.geometry.Vector2D;
+import javafx.geometry.Point2D;
 
 public class Attack {
 
@@ -24,15 +23,15 @@ public class Attack {
 		return creature -> creature.hit(this);
 	}
 
-	public boolean canHit(double direction, Vector2D from, Vector2D to) {
+	public boolean canHit(double direction, Point2D from, Point2D to) {
 		return isInRange(from, to) && isInAngle(direction * 90, from, to);
 	}
 
-	public boolean isInRange(Vector2D from, Vector2D to) {
+	public boolean isInRange(Point2D from, Point2D to) {
 		return from.distance(to) <= range;
 	}
 
-	public boolean isInAngle(double attack, Vector2D from, Vector2D to) {
+	public boolean isInAngle(double attack, Point2D from, Point2D to) {
 		return Math.abs(attack - Math.toDegrees(from.angle(to))) <= angle;
 	}
 

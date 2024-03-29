@@ -1,25 +1,25 @@
 package org.dionysius.game;
 
-import io.scvis.geometry.Vector2D;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Point2D;
 
 import javax.annotation.Nonnull;
 
-public class Hitbox {
+public class HitBox {
 
     private final @Nonnull Creature creature;
 
     private final DoubleProperty width = new SimpleDoubleProperty();
     private final DoubleProperty height = new SimpleDoubleProperty();
 
-    public Hitbox(@Nonnull Creature creature, double width, double height) {
+    public HitBox(@Nonnull Creature creature, double width, double height) {
         this.creature = creature;
         setWidth(width);
         setHeight(height);
     }
 
-    public boolean isInside(Vector2D v) {
+    public boolean isInside(Point2D v) {
         double minX = creature.getPosition().getX() - getWidth() / 2;
         double maxX = creature.getPosition().getX() + getWidth() / 2;
         if (minX < v.getX() && v.getX() < maxX) {

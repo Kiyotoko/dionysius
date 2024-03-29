@@ -1,6 +1,6 @@
 package org.dionysius.content;
 
-import io.scvis.geometry.Vector2D;
+import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import org.dionysius.game.AnimationFrame;
 import org.dionysius.game.Creature;
@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ShieldDroid extends Enemy {
-    public ShieldDroid(@Nonnull Game game, Vector2D position) {
+    public ShieldDroid(@Nonnull Game game, Point2D position) {
         super(game, position);
         getPattern().addAll(List.of(this::attack1, this::walk, this::attack1));
         getHitbox().setHeight(31);
