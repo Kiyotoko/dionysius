@@ -1,19 +1,17 @@
-# reduced pom
-dependency-reduced-pom.xml
+### IntelliJ IDEA
+.idea/
+*.iml
 
-# generated classes
-target
+### Java
+dependency-reduced-pom.xml
+target/
 *.class
 *.jar
 
-# Eclipse
+### Eclipse
 .settings/*
 *.classpath
 *.project
 
-# VS Code
+### VS Code
 .vscode/*
-
-# snapcraft
-*.snap
-*.txt
