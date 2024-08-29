@@ -16,11 +16,11 @@
 	</properties>
 
 	<dependencies>
-	        <dependency>
-	            <groupId>org.openjfx</groupId>
-	            <artifactId>javafx-controls</artifactId>
-	            <version>19</version>
-	        </dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>19</version>
+		</dependency>
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-base</artifactId>
@@ -66,34 +66,6 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.akathist.maven.plugins.launch4j</groupId>
-				<artifactId>launch4j-maven-plugin</artifactId>
-				<version>1.5.1</version>
-				<executions>
-					<execution>
-						<id>l4j-clui</id>
-						<phase>install</phase>
-						<goals>
-							<goal>launch4j</goal>
-						</goals>
-						<configuration>
-							<headerType>gui</headerType>
-							<jar>${project.build.directory}/${project.artifactId}-${project.version}-shaded.jar</jar>
-							<outfile>${project.build.directory}/Dionysius.exe</outfile>
-							<downloadUrl>http://java.com/download</downloadUrl>
-							<classPath>
-								<mainClass>${project.mainClass}</mainClass>
-								<preCp>anything</preCp>
-							</classPath>
-							<jre>
-								<minVersion>1.8.0</minVersion>
-								<jdkPreference>preferJre</jdkPreference>
-							</jre>
 						</configuration>
 					</execution>
 				</executions>
